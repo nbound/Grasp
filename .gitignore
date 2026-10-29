@@ -160,3 +160,4 @@ build/
 # Supabase CLI (only if you use it locally)
 supabase/.temp/
 supabase/.branches/
+*.sql
