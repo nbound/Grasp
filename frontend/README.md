@@ -6,20 +6,61 @@ student feature modules, a small shared UI kit, and a Socket.io client adapter.
 
 Use Node 22.12+ (Node 24 was used for validation).
 
+To get this branch on another computer:
+
+```sh
+git clone https://github.com/nbound/Grasp.git
+cd Grasp
+git switch feat/nathaniel-student-frontend
+```
+
+If you already have a clone, run `git fetch origin` and
+`git switch feat/nathaniel-student-frontend` from its repository root instead.
+Then install the frontend dependencies:
+
 ```sh
 cd frontend
 npm ci
+```
+
+Copy the example file from inside `frontend`:
+
+```sh
+# macOS / Linux / Git Bash
 cp .env.example .env.local
+```
+
+```powershell
+# Windows PowerShell
+Copy-Item .env.example .env.local
+```
+
+You can also create `.env.local` in your editor and copy the contents of
+`.env.example` into it. Place it beside `frontend/package.json`, and make sure
+the filename is not `.env.local.txt`. The example enables demo mode by default;
+no Supabase keys or backend are needed.
+
+```sh
 npm run dev
 ```
 
-For the local, single-browser fixture, set `VITE_STUDENT_DEMO=true` in
-`.env.local`, or run `VITE_STUDENT_DEMO=true npm run dev`. Join with PIN
+Open the URL Vite prints, usually `http://localhost:5173`. For the local,
+single-browser fixture, keep `VITE_STUDENT_DEMO=true` in `.env.local`. Join with PIN
 `123456` and a nickname with 2–24 characters. The fixture never contacts a
 server, simulates other players, or runs gameplay. Demo mode is disabled in
 production builds.
 
-For a live server, leave demo mode false and set `VITE_GAME_SERVER_URL` to
+Try submitting an empty form, entering a different PIN, joining with `123456`,
+checking your nickname/Team Fern/one-player count, and leaving the lobby.
+Opening `/lobby` before joining should redirect to `/join`. Other browser tabs
+will not appear in the demo roster.
+
+Restart Vite after changing environment files: press Ctrl+C, then run
+`npm run dev` again. `.env.local` is ignored by Git and should stay on your
+computer. Commit safe shared defaults and explanations in `.env.example`
+instead. Never add secret keys to frontend environment files.
+
+For a live server, change `VITE_STUDENT_DEMO=false` and set `VITE_GAME_SERVER_URL` to
 the Node server origin (local default `http://localhost:3001`). Configure its
 Socket.io CORS origin to match Vite (`http://localhost:5173` by default).
 The server must implement the [draft contract](../docs/student-socket-contract.md).
@@ -36,6 +77,18 @@ npm run build
 or losing the socket connection clears membership in this Sprint 1 framework.
 Stable reconnect identity belongs to Ammar's GR-34; it is not implemented here.
 No game state or student identity is persisted to browser storage yet.
+
+The incoming Vite starter from `schema`/`dev` is preserved at `/dev/starter`.
+Its counter, documentation links, and graphics live in
+`src/features/starter/StarterPage.jsx`, with colocated assets and scoped CSS.
+`App.jsx` routes to this page outside the student wildcard, so `/join` and
+`/lobby` continue working. A back link returns to the student join flow.
+The starter loads lazily, and its styles do not target the global root or
+student pages. This is the preserved setup screen, not a teacher dashboard.
+
+When resolving the original incoming `App.jsx` conflict, retain this branch's
+`App.jsx`; the incoming screen has already been relocated. Do not also import
+the incoming global `App.css` or replace the student base `index.css`.
 
 Code locations:
 
