@@ -103,9 +103,18 @@ base styles and page title in favor of this implementation; retain teacher
 changes when they exist. Combine package scripts/dependencies and regenerate
 `package-lock.json` with npm rather than hand-editing lockfile conflicts.
 The new student feature/UI directories do not exist in the reviewed branches.
-README and environment examples require combining the relevant documentation
+The frontend README and environment example require combining the relevant documentation
 and values. The eventual `schema` integration also requires deciding how to
 track SQL instead of inheriting its blanket exclusion.
+
+A Git merge-tree dry run against `dev` identifies add/add conflicts in
+`frontend/.env.example`, `frontend/.prettierrc`, `frontend/README.md`,
+`frontend/index.html`, `frontend/package.json`, `frontend/package-lock.json`,
+`frontend/src/App.jsx`, `frontend/src/index.css`, and `frontend/vite.config.js`.
+The prettier and Vite config differences are only final newlines. The root
+ignore rules and other unchanged scaffold files match `dev`. No merge was
+applied to this branch; this is a reviewable integration path, not a claim that
+the branches merge automatically.
 
 ## Current component diagram (GR-17 working source)
 
@@ -152,6 +161,8 @@ sequenceDiagram
 
 ## Verification and remaining limits
 
+Validation passed: **14 unit tests**, ESLint, Prettier format check, the Vite
+production build, and **8 Chromium workflow checks** with no browser errors.
 Validation uses Node 24 and the existing Vite/lint/format configuration. Tests
 cover join normalization/errors, public snapshot validation, unrelated session
 updates, malformed/rejected/timed-out acknowledgements, offline emit prevention,
