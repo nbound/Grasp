@@ -1,0 +1,9 @@
+@import 'tailwindcss';
+@import './components/ui/tokens.css';
+
+body {
+  margin: 0;
+}
+* {
+  box-sizing: border-box;
+}
