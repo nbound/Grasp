@@ -46,7 +46,9 @@ totals 6 h. Later-sprint screens and data persistence have **not** been implemen
 
 Branch: `feat/nathaniel-student-frontend`, created from `origin/main` at
 `6a86fc0fbbc353bbe1959f5c85547c8e9f12af57` (the current remote `main`). The
-branch is local; it has not been pushed, deployed, or merged.
+feature branch contains the implementation and review notes and is being pushed
+to GitHub with explicit user approval. `main` has not been changed; nothing has
+been deployed or merged.
 
 The branch reuses `dev`'s dependency versions, lockfile baseline, Vite/Tailwind
 configuration, lint/format tools, and React entry point. It adds `socket.io-client`
