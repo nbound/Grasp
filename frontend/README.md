@@ -78,6 +78,18 @@ or losing the socket connection clears membership in this Sprint 1 framework.
 Stable reconnect identity belongs to Ammar's GR-34; it is not implemented here.
 No game state or student identity is persisted to browser storage yet.
 
+The incoming Vite starter from `schema`/`dev` is preserved at `/dev/starter`.
+Its counter, documentation links, and graphics live in
+`src/features/starter/StarterPage.jsx`, with colocated assets and scoped CSS.
+`App.jsx` routes to this page outside the student wildcard, so `/join` and
+`/lobby` continue working. A back link returns to the student join flow.
+The starter loads lazily, and its styles do not target the global root or
+student pages. This is the preserved setup screen, not a teacher dashboard.
+
+When resolving the original incoming `App.jsx` conflict, retain this branch's
+`App.jsx`; the incoming screen has already been relocated. Do not also import
+the incoming global `App.css` or replace the student base `index.css`.
+
 Code locations:
 
 - `src/components/ui/`: Button, TextInput, Card, scoped color/type/layout tokens.
