@@ -160,3 +160,7 @@ build/
 # Supabase CLI (only if you use it locally)
 supabase/.temp/
 supabase/.branches/
+# Keep database migrations, seeds, and tests in version control.
+# Ignore ad-hoc database dumps instead of every SQL file.
+*.dump
+*.backup
