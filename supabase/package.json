@@ -1,0 +1,12 @@
+{
+  "name": "grasp-database",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "node --test tests/database.test.mjs",
+    "test:local": "node --test tests/local.integration.test.mjs"
+  },
+  "devDependencies": {
+    "@electric-sql/pglite": "0.3.14"
+  }
+}
