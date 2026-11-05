@@ -1,8 +1,7 @@
 # Grasp student frontend
 
-This branch reuses the React/Vite/Tailwind/React Router configuration from `dev`
-at `017afc7` and adds student feature modules, a small shared UI kit,
-and a Socket.io client adapter.
+The frontend uses React, Vite, Tailwind, and React Router, with student feature
+modules, a shared UI kit, and an authenticated Socket.IO client adapter.
 
 Use Node 22.12+ (Node 24 was used for validation).
 
@@ -11,11 +10,12 @@ To get this branch on another computer:
 ```sh
 git clone https://github.com/nbound/Grasp.git
 cd Grasp
-git switch feat/nathaniel-student-frontend
+git switch dev
 ```
 
 If you already have a clone, run `git fetch origin` and
-`git switch feat/nathaniel-student-frontend` from its repository root instead.
+`git switch dev` from its repository root instead. For unmerged backend work,
+use your local `feat/backend-setup` branch.
 Then install the frontend dependencies:
 
 ```sh
@@ -37,15 +37,16 @@ Copy-Item .env.example .env.local
 
 You can also create `.env.local` in your editor and copy the contents of
 `.env.example` into it. Place it beside `frontend/package.json`, and make sure
-the filename is not `.env.local.txt`. The example enables demo mode by default;
-no Supabase keys or backend are needed.
+the filename is not `.env.local.txt`. The example uses the live backend by default.
+Set the public Supabase URL/key and start the [backend](../server/README.md), or
+explicitly set `VITE_STUDENT_DEMO=true` for a fixture without a backend.
 
 ```sh
 npm run dev
 ```
 
 Open the URL Vite prints, usually `http://localhost:5173`. For the local,
-single-browser fixture, keep `VITE_STUDENT_DEMO=true` in `.env.local`. Join with PIN
+single-browser fixture, set `VITE_STUDENT_DEMO=true` in `.env.local`. Join with PIN
 `123456` and a nickname with 2–24 characters. The fixture never contacts a
 server, simulates other players, or runs gameplay. Demo mode is disabled in
 production builds.
@@ -63,7 +64,10 @@ instead. Never add secret keys to frontend environment files.
 For a live server, change `VITE_STUDENT_DEMO=false` and set `VITE_GAME_SERVER_URL` to
 the Node server origin (local default `http://localhost:3001`). Configure its
 Socket.io CORS origin to match Vite (`http://localhost:5173` by default).
-The server must implement the [draft contract](../docs/student-socket-contract.md).
+The server implements the [socket contract](../docs/student-socket-contract.md).
+Anonymous Supabase Auth sign-ins must be enabled. The client persists a guest
+session and sends its current token with each socket handshake. Multiple tabs
+in one browser profile share that identity; use separate profiles for students.
 Vite environment values are public; server secret keys belong only on the server.
 
 ```sh

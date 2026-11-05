@@ -1,4 +1,4 @@
-// Draft frontend boundary. Ammar owns the final server contract (GR-08).
+// Public lobby boundary shared with the authenticated server (GR-08).
 export function parseLobby(value) {
   if (
     !value ||

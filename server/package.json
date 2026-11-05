@@ -1,0 +1,20 @@
+{
+  "name": "grasp-server",
+  "private": true,
+  "type": "module",
+  "engines": { "node": ">=22.12.0" },
+  "scripts": {
+    "dev": "node --watch src/index.js",
+    "start": "node src/index.js",
+    "check:connection": "node scripts/checkConnection.js",
+    "smoke:hosted": "node scripts/smokeHosted.js",
+    "test": "node --test --test-timeout=15000 tests/*.test.js",
+    "test:local": "node --test tests/local.integration.mjs"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.118.0",
+    "express": "^5.1.0",
+    "socket.io": "^4.8.1"
+  },
+  "devDependencies": { "socket.io-client": "^4.8.4" }
+}

@@ -51,10 +51,6 @@ the repository root. `config.toml` configures PostgreSQL 17, enables anonymous
 sign-ins, and keeps the `private` schema outside the API's exposed schemas.
 Email confirmation remains enabled.
 
-`supabase db reset --local` recreates the local database and reapplies migrations
-and seed data. This erases that local database; do not use it against data you
-intend to keep. No project linking or remote migration push is part of Phase 0.
-
 `seed.sql` contains two teachers, three anonymous students, and two example
 quizzes. These are database-only fixtures with reserved example.test emails,
 no passwords, and no Auth identities. They are not browser login accounts.

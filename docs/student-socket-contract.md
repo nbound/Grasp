@@ -1,76 +1,71 @@
-# Student socket boundary (draft for GR-08)
+# Lobby socket contract (GR-08)
 
-Only the event names `player_join`, `player_left`, and `lobby_update` come from
-the supplied backlog. **The payloads below are proposed by this frontend branch;
-they are not an existing server API.** Ammar owns GR-08 and should reconcile them
-with his server implementation before integration. No server code was present
-in the inspected branches.
+Implemented by `server/src/app.js`. Use Socket.IO 4.x with
+`auth: { accessToken }`: a current Supabase user token, never a project API key.
+Authentication failure produces `connect_error` with `UNAUTHORIZED`.
 
-## Lobby flow implemented by this frontend
+## Requests
 
-Client emits `player_join` with `{ pin: "012345", nickname: "Nate" }`, using
-Socket.io's acknowledgement callback and an 8-second timeout. PINs are strings
-to preserve leading zeros. Nicknames are trimmed and accept 2–24 Unicode code
-points with no control characters; the server must validate independently and
-decide case-insensitive duplicate handling.
+All requests except `player_left` require acknowledgement callbacks. The student
+client uses an 8-second timeout. Success: `{ ok: true, data: ... }`.
+Failure: `{ ok: false, error: { code: ... } }`.
 
-Success acknowledgement:
+| Event | Payload | Success data | Authorization |
+| --- | --- | --- | --- |
+| `host_create` | `{ quizId, maxPlayers?: 40, teamCount?: 2 }` | `{ lobby }` | Permanent teacher, owns quiz |
+| `host_join` | `{ sessionId }` | `{ lobby }` | Permanent teacher, owns session |
+| `player_join` | `{ pin: "012345", nickname: "Nate" }` | `{ playerId, lobby }` | Verified Supabase user |
+| `player_left` | `{}` | `{}` (ack optional) | Current socket membership |
+
+Quiz/session IDs are UUIDs. Capacity is 1-200; team count is 2-8. PINs are
+six-digit strings, preserving leading zeros. Trimmed nicknames accept 2-24
+Unicode code points without controls and are unique case-insensitively per game.
+
+Repeat joins preserve the original player ID, nickname, and team while the
+session remains a lobby, including after refresh with the same Auth identity.
+Same-socket host_create retries reuse its last session for that quiz. Save the
+session ID and use host_join after reconnect; host_create across reconnects is
+not idempotent.
+
+Errors: `BAD_PIN`, `INVALID_INPUT`, `DUPLICATE_NICKNAME`, `SESSION_CLOSED`,
+`SESSION_FULL`, `UNAUTHORIZED`, `FORBIDDEN`, `RATE_LIMITED`, `SERVER_BUSY`,
+`SERVER_ERROR`. Unknown errors should display a generic retry message.
+
+## Lobby snapshot
 
 ```json
 {
-  "ok": true,
-  "data": {
-    "playerId": "player-1",
-    "lobby": {
-      "sessionId": "session-1",
-      "pin": "012345",
-      "status": "lobby",
-      "teams": [{ "id": "fern", "name": "Team Fern" }],
-      "players": [{ "id": "player-1", "nickname": "Nate", "teamId": "fern" }]
-    }
-  }
+  "sessionId": "session-uuid",
+  "pin": "012345",
+  "status": "lobby",
+  "teams": [{ "id": "1", "name": "Team 1" }],
+  "players": [{ "id": "player-uuid", "nickname": "Nate", "teamId": "1" }]
 }
 ```
 
-Failure acknowledgement:
+Team IDs are stringified database team numbers, scoped to the session.
+`lobby_update` broadcasts this complete object to authorized room members after
+presence changes. Snapshots are serialized per room. The frontend rejects
+malformed snapshots and ignores unrelated session IDs.
 
-```json
-{ "ok": false, "error": { "code": "DUPLICATE_NICKNAME" } }
-```
+The roster represents connected players, deduplicated across their tabs. Leave
+and disconnect remove presence, never database player records. A player stays
+visible while any of their sockets remains joined. Offline records preserve
+team/nickname and reserve capacity. Rejoin uses the persisted Auth identity.
 
-Recognized errors: `BAD_PIN`, `DUPLICATE_NICKNAME`, `SESSION_CLOSED`,
-`SESSION_FULL`. Unknown errors get a generic message; raw server errors are
-not displayed. A timeout leaves the user on the join page. The server should
-make repeat joins on the same socket idempotent, since a lost acknowledgement
-may follow a successful server-side join.
+The frontend clears displayed membership on disconnect and asks for the PIN
+again. Automatic active-game resume remains GR-34. Transport loss reconnects
+automatically; explicit auth failure requires refresh or a session change.
+Tokens are verified at connect and every operation, plus once per minute for
+idle subscribers. Browser token refresh reconnects with a fresh token.
 
-Server broadcasts `lobby_update` with the complete `lobby` object above to the
-session room after joins/leaves. The client derives player count and team
-membership from that snapshot. It rejects malformed membership and ignores
-unrelated sessions. If its own player disappears, it returns to `/join`.
+A supplied user/player ID never grants room access: student membership derives
+from the authenticated RPC result. No emails, auth IDs, tokens, answer keys,
+scores, or privileged database fields are broadcast.
 
-Client emits `player_left` with `{}` when leaving. This direction is also a
-proposal: if the server uses `player_left` only as a notification, adapt this
-one wrapper to the agreed leave request. The server must identify the player
-from the socket's membership, remove it on disconnect, and broadcast a fresh
-snapshot. Client-supplied player IDs must not authorize removal of others.
+## Future gameplay
 
-`connect`, `disconnect`, and `connect_error` update connection status. The client
-does not queue joins while disconnected. On disconnect it clears membership and
-requires an explicit rejoin after connection recovery. Reconnect persistence
-and resume tokens remain GR-34. Subscriptions remove only their own listeners,
-and the provider connects/disconnects its socket on mount/unmount.
-
-## Future gameplay boundary: planning only
-
-GR-19/20/30/31 will need server-issued question IDs and four public options,
-answer acknowledgement with correctness/correct answer/explanation,
-server-derived progress and visual streak, team scoreboard, and authorized
-end-of-game results. Agree event names and ordering with GR-21–23 before
-implementing those handlers. Do not send answer keys before feedback, derive
-scores in the browser, or include speed/streak multipliers. Howard's answer
-persistence should supply attempts and time data for exports.
-
-Teacher hosting, quiz ownership, Supabase table names/RLS, and optional student
-auth have no implemented contract in this branch. They remain separate server,
-teacher UI, and database responsibilities.
+Game start, questions, answer submission, scoring, reveal, and exports are not
+implemented in this foundation. GR-19-26 must define their server-authorized
+contract before adding handlers. Never trust browser scores, correctness,
+timing, or player IDs. Do not expose answer keys before feedback.

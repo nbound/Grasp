@@ -6,6 +6,9 @@ const messages = {
   DUPLICATE_NICKNAME: 'That nickname is already taken. Try another one.',
   SESSION_CLOSED: 'This game is no longer accepting players.',
   SESSION_FULL: 'This game is full. Check with your teacher.',
+  UNAUTHORIZED: 'Your sign-in expired. Reconnect and try again.',
+  RATE_LIMITED: 'Too many attempts. Wait a minute and try again.',
+  SERVER_BUSY: 'The server is busy. Please try again.',
 }
 
 export function createSocketStudentClient(socket, { timeoutMs = 8000 } = {}) {
