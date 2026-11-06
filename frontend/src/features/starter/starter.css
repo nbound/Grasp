@@ -6,7 +6,7 @@
     --bg: #fff;
     --border: #e5e4e7;
     --code-bg: #f4f3ec;
-    --accent: #aa3bff;
+    --accent: #7c20c2;
     --accent-bg: rgba(170, 59, 255, 0.1);
     --accent-border: rgba(170, 59, 255, 0.5);
     --social-bg: rgba(244, 243, 236, 0.5);
@@ -19,7 +19,6 @@
 
     font: 18px/145% var(--sans);
     letter-spacing: 0.18px;
-    color-scheme: light dark;
     color: var(--text);
     background: var(--bg);
     font-synthesis: none;
@@ -32,7 +31,7 @@
     }
   }
 
-  @media (prefers-color-scheme: dark) {
+  :root[data-theme='dark'] & {
     & {
       --text: #9ca3af;
       --text-h: #f3f4f6;
@@ -53,11 +52,9 @@
   }
 
   & {
-    width: 1126px;
-    max-width: 100%;
+    width: 100%;
     margin: 0 auto;
     text-align: center;
-    border-inline: 1px solid var(--border);
     min-height: 100svh;
     display: flex;
     flex-direction: column;
@@ -294,7 +291,13 @@
   }
 
   nav {
-    padding: 1rem;
+    background: var(--grasp-nav);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    flex-wrap: wrap;
+    padding: 1rem clamp(1rem, 4vw, 2.5rem);
     text-align: left;
   }
   nav a {

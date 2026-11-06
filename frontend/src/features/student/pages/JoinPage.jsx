@@ -35,7 +35,7 @@ export function JoinPage() {
         Grow what you know.
       </h1>
       <p className="grasp-muted">
-        Join your class with a PIN. No account, no countdown—just room to learn
+        Join your class with a PIN. No account, no countdown, just room to learn
         together.
       </p>
       {mode === 'demo' && (
@@ -89,7 +89,7 @@ export function JoinPage() {
         </form>
       </Card>
       <p className="grasp-muted">
-        Questions move at your teacher’s pace. Take the time you need.
+        Questions move at your teacher's pace. Take the time you need.
       </p>
     </main>
   )

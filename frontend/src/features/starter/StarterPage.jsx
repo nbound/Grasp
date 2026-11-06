@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { Link } from 'react-router'
+import { ThemeToggle } from '../../components/ui/ThemeToggle.jsx'
 import iconsUrl from './assets/icons.svg'
 import heroImg from './assets/hero.png'
 import reactLogo from './assets/react.svg'
@@ -13,6 +14,7 @@ export default function StarterPage() {
     <main className="starter-preview">
       <nav>
         <Link to="/join">← Back to Grasp</Link>
+        <ThemeToggle />
       </nav>
       <section id="center">
         <div className="hero">
