@@ -1,5 +1,4 @@
 import { Link, Navigate, Route, Routes } from 'react-router'
-import { ThemeToggle } from '../../components/ui/ThemeToggle.jsx'
 import { StudentProvider } from './StudentProvider.jsx'
 import { useStudent } from './StudentContext.js'
 import { JoinPage } from './pages/JoinPage.jsx'
@@ -22,12 +21,9 @@ function StudentShell() {
         <Link className="grasp-brand" to="/join" aria-label="Grasp home">
           grasp<span aria-hidden="true"> ✳</span>
         </Link>
-        <div className="grasp-header-actions">
-          <span className="grasp-status" role="status">
-            {labels[connection]}
-          </span>
-          <ThemeToggle />
-        </div>
+        <span className="grasp-status" role="status">
+          {labels[connection]}
+        </span>
       </header>
       <Routes>
         <Route path="/join" element={<JoinPage />} />

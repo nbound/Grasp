@@ -82,17 +82,8 @@ or losing the socket connection clears membership in this Sprint 1 framework.
 Stable reconnect identity belongs to Ammar's GR-34; it is not implemented here.
 No game state or student identity is persisted to browser storage yet.
 
-The incoming Vite starter from `schema`/`dev` is preserved at `/dev/starter`.
-Its counter, documentation links, and graphics live in
-`src/features/starter/StarterPage.jsx`, with colocated assets and scoped CSS.
-`App.jsx` routes to this page outside the student wildcard, so `/join` and
-`/lobby` continue working. A back link returns to the student join flow.
-The starter loads lazily, and its styles do not target the global root or
-student pages. This is the preserved setup screen, not a teacher dashboard.
-
-When resolving the original incoming `App.jsx` conflict, retain this branch's
-`App.jsx`; the incoming screen has already been relocated. Do not also import
-the incoming global `App.css` or replace the student base `index.css`.
+`App.jsx` mounts the student app under a single `BrowserRouter`. Unknown URLs
+redirect to `/join`.
 
 Code locations:
 
@@ -109,19 +100,3 @@ fallback redirect to student paths so it does not capture teacher routes. Shared
 UI uses `.grasp-app` CSS variables; wrap teacher pages with that class to reuse
 the tokens. Full sprint and merge guidance is in
 [the implementation plan](../docs/nathaniel-implementation-plan.md).
-# React + Vite
-
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
-
-Currently, two official plugins are available:
-
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
-
-## React Compiler
-
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
-
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
