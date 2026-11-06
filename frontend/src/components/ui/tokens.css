@@ -1,12 +1,26 @@
+:root {
+  color-scheme: dark;
+  --grasp-ink: #edf5e9;
+  --grasp-muted: #b2c4b8;
+  --grasp-paper: #101d19;
+  --grasp-nav: #162720;
+  --grasp-surface: #1a2c25;
+  --grasp-primary: #b5df91;
+  --grasp-primary-hover: #c8eca9;
+  --grasp-on-primary: #183125;
+  --grasp-accent: #304b31;
+  --grasp-border: #40594c;
+  --grasp-input-border: #718f7e;
+  --grasp-input-bg: #12221c;
+  --grasp-hover: #2b4235;
+  --grasp-focus: #8bcdf5;
+  --grasp-error: #ffabb2;
+  --grasp-disabled-bg: #34483c;
+  --grasp-disabled-text: #b4c2b6;
+}
+
 .grasp-app {
-  --grasp-ink: #183d38;
-  --grasp-muted: #526661;
-  --grasp-paper: #f5f6ef;
-  --grasp-surface: #fff;
-  --grasp-primary: #185d4e;
-  --grasp-accent: #d7ee9e;
-  --grasp-border: #c9d6cb;
-  --grasp-error: #a12d38;
+  --grasp-page-gutter: clamp(1rem, 4vw, 2.5rem);
   min-height: 100svh;
   color: var(--grasp-ink);
   background: var(--grasp-paper);
@@ -15,15 +29,17 @@
     sans-serif;
 }
 .grasp-app header {
-  border-bottom: 1px solid var(--grasp-border);
-  padding: 1.2rem max(1.2rem, calc((100vw - 68rem) / 2));
+  background: var(--grasp-nav);
+  padding: clamp(0.75rem, 2svh, 1.2rem)
+    max(var(--grasp-page-gutter), calc((100% - 68rem) / 2));
   display: flex;
-  gap: 1rem;
+  gap: 0.75rem 1rem;
   align-items: center;
   justify-content: space-between;
   flex-wrap: wrap;
 }
 .grasp-brand {
+  flex-shrink: 0;
   color: inherit;
   font-size: 1.6rem;
   font-weight: 800;
@@ -31,18 +47,27 @@
   letter-spacing: -0.06em;
 }
 .grasp-app main {
-  width: min(100% - 2.5rem, 42rem);
-  margin: 3rem auto;
-  padding-bottom: 2rem;
+  width: min(100% - 2 * var(--grasp-page-gutter), 42rem);
+  margin: clamp(1.5rem, 5svh, 3rem) auto;
+  padding-bottom: clamp(1rem, 3svh, 2rem);
+  overflow-wrap: anywhere;
+}
+.grasp-app h1,
+.grasp-app h2 {
+  color: var(--grasp-ink);
+  font-weight: 700;
 }
 .grasp-app h1 {
-  font-size: clamp(2rem, 6vw, 3.1rem);
+  font-size: clamp(1.75rem, 1.1rem + 3vw, 3.1rem);
   line-height: 1.15;
   letter-spacing: -0.04em;
   margin: 0.5rem 0 1rem;
+  text-wrap: balance;
 }
 .grasp-app h2 {
   font-size: 1.2rem;
+  line-height: 1.3;
+  letter-spacing: -0.01em;
   margin: 0 0 0.6rem;
 }
 .grasp-app p {
@@ -61,8 +86,8 @@
   border: 1px solid var(--grasp-border);
   border-radius: 1.1rem;
   background: var(--grasp-surface);
-  padding: clamp(1.25rem, 4vw, 2rem);
-  margin-top: 1.5rem;
+  padding: clamp(1rem, 4vw, 2rem);
+  margin-top: clamp(1rem, 3svh, 1.5rem);
 }
 .grasp-field {
   display: grid;
@@ -74,12 +99,17 @@
 }
 .grasp-input {
   width: 100%;
-  border: 1px solid var(--grasp-border);
+  min-width: 0;
+  border: 1px solid var(--grasp-input-border);
   border-radius: 0.6rem;
-  padding: 0.85rem 1rem;
-  background: white;
+  padding: clamp(0.65rem, 1.5svh, 0.85rem) 1rem;
+  background: var(--grasp-input-bg);
   color: var(--grasp-ink);
   font: inherit;
+}
+.grasp-input::placeholder {
+  color: var(--grasp-muted);
+  opacity: 1;
 }
 .grasp-input[aria-invalid='true'] {
   border-color: var(--grasp-error);
@@ -87,7 +117,7 @@
 .grasp-input:focus-visible,
 .grasp-button:focus-visible,
 .grasp-app a:focus-visible {
-  outline: 3px solid #297bb0;
+  outline: 3px solid var(--grasp-focus);
   outline-offset: 3px;
 }
 .grasp-button {
@@ -95,36 +125,46 @@
   border-radius: 0.6rem;
   padding: 0.85rem 1.25rem;
   background: var(--grasp-primary);
-  color: white;
+  color: var(--grasp-on-primary);
   font: inherit;
   font-weight: 650;
   min-height: 48px;
   cursor: pointer;
+}
+.grasp-button:hover:not(:disabled) {
+  background: var(--grasp-primary-hover);
 }
 .grasp-button--secondary {
   background: transparent;
   color: var(--grasp-ink);
   border-color: var(--grasp-border);
 }
+.grasp-button--secondary:hover:not(:disabled) {
+  background: var(--grasp-hover);
+}
 .grasp-button:disabled {
-  opacity: 0.6;
-  cursor: wait;
+  background: var(--grasp-disabled-bg);
+  color: var(--grasp-disabled-text);
+  cursor: not-allowed;
 }
 .grasp-error {
   color: var(--grasp-error);
 }
 .grasp-status {
   display: inline-block;
+  min-width: 0;
   background: var(--grasp-accent);
   color: var(--grasp-ink);
   padding: 0.3rem 0.75rem;
   border-radius: 2rem;
   font-size: 0.8rem;
   font-weight: 650;
+  line-height: 1.4;
+  overflow-wrap: anywhere;
 }
 .grasp-stats {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 12rem), 1fr));
   gap: 1rem;
   margin: 1.5rem 0;
 }
@@ -149,18 +189,33 @@
 }
 .grasp-roster li {
   display: flex;
+  flex-wrap: wrap;
   justify-content: space-between;
-  gap: 1rem;
+  gap: 0.25rem 1rem;
   padding: 0.7rem 0;
   border-bottom: 1px solid var(--grasp-border);
   overflow-wrap: anywhere;
+}
+.grasp-roster li > span {
+  min-width: 0;
 }
 .grasp-note {
   border-left: 3px solid var(--grasp-primary);
   padding-left: 1rem;
 }
-@media (max-width: 400px) {
-  .grasp-stats {
-    grid-template-columns: 1fr;
+@media (max-width: 36rem) {
+  .grasp-app header {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .grasp-app header .grasp-status {
+    justify-self: start;
+    max-width: 100%;
+  }
+  .grasp-app .grasp-brand {
+    justify-self: start;
+  }
+  .grasp-app main .grasp-button {
+    width: 100%;
   }
 }
