@@ -68,6 +68,7 @@ test(
       ok(
         await admin.auth.admin.updateUserById(teacher.id, {
           email_confirm: true,
+          app_metadata: { grasp_role: "teacher" },
         }),
       );
       const teacherSession = ok(
@@ -86,15 +87,13 @@ test(
       );
       quizzes.push(quiz.id);
       ok(
-        await teacherClient
-          .from("questions")
-          .insert({
-            quiz_id: quiz.id,
-            position: 0,
-            prompt: "Two plus two?",
-            choices: ["1", "2", "3", "4"],
-            correct_index: 3,
-          }),
+        await teacherClient.from("questions").insert({
+          quiz_id: quiz.id,
+          position: 0,
+          prompt: "Two plus two?",
+          choices: ["1", "2", "3", "4"],
+          correct_index: 3,
+        }),
       );
       server = createApp({ config, repository: createRepository(config) });
       server.httpServer.listen(0, "127.0.0.1");

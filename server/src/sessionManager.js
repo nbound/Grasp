@@ -15,7 +15,13 @@ export function validateHost(value) {
     teamCount > 8
   )
     throw new PublicError("INVALID_INPUT");
-  return { quizId: value.quizId, maxPlayers, teamCount };
+  if (value.requestId !== undefined) validateSessionId(value.requestId);
+  return {
+    quizId: value.quizId,
+    maxPlayers,
+    teamCount,
+    ...(value.requestId ? { requestId: value.requestId } : {}),
+  };
 }
 export function validateSessionId(value) {
   if (typeof value !== "string" || !uuid.test(value))

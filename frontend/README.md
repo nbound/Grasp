@@ -1,102 +1,58 @@
-# Grasp student frontend
+# Grasp frontend
 
-The frontend uses React, Vite, Tailwind, and React Router, with student feature
-modules, a shared UI kit, and an authenticated Socket.IO client adapter.
-
-Use Node 22.12+ (Node 24 was used for validation).
-
-To get this branch on another computer:
+React 19, Vite, Tailwind 4, React Router, Supabase Auth and Socket.IO.
+Use `feat/game-creation` for this implementation. See the root
+[deployment guide](../docs/deployment.md) for setup, teacher invitations, Auth,
+multi-device testing and release configuration.
 
 ```sh
-git clone https://github.com/nbound/Grasp.git
-cd Grasp
-git switch dev
-```
-
-If you already have a clone, run `git fetch origin` and
-`git switch dev` from its repository root instead. For unmerged backend work,
-use your local `feat/backend-setup` branch.
-Then install the frontend dependencies:
-
-```sh
-cd frontend
 npm ci
-```
-
-Copy the example file from inside `frontend`:
-
-```sh
-# macOS / Linux / Git Bash
-cp .env.example .env.local
-```
-
-```powershell
-# Windows PowerShell
-Copy-Item .env.example .env.local
-```
-
-You can also create `.env.local` in your editor and copy the contents of
-`.env.example` into it. Place it beside `frontend/package.json`, and make sure
-the filename is not `.env.local.txt`. The example uses the live backend by default.
-Set the public Supabase URL/key and start the [backend](../server/README.md), or
-explicitly set `VITE_STUDENT_DEMO=true` for a fixture without a backend.
-
-```sh
 npm run dev
-```
-
-Open the URL Vite prints, usually `http://localhost:5173`. For the local,
-single-browser fixture, set `VITE_STUDENT_DEMO=true` in `.env.local`. Join with PIN
-`123456` and a nickname with 2–24 characters. The fixture never contacts a
-server, simulates other players, or runs gameplay. Demo mode is disabled in
-production builds.
-
-Try submitting an empty form, entering a different PIN, joining with `123456`,
-checking your nickname/Team Fern/one-player count, and leaving the lobby.
-Opening `/lobby` before joining should redirect to `/join`. Other browser tabs
-will not appear in the demo roster.
-
-Restart Vite after changing environment files: press Ctrl+C, then run
-`npm run dev` again. `.env.local` is ignored by Git and should stay on your
-computer. Commit safe shared defaults and explanations in `.env.example`
-instead. Never add secret keys to frontend environment files.
-
-For a live server, change `VITE_STUDENT_DEMO=false` and set `VITE_GAME_SERVER_URL` to
-the Node server origin (local default `http://localhost:3001`). Configure its
-Socket.io CORS origin to match Vite (`http://localhost:5173` by default).
-The server implements the [socket contract](../docs/student-socket-contract.md).
-Anonymous Supabase Auth sign-ins must be enabled. The client persists a guest
-session and sends its current token with each socket handshake. Multiple tabs
-in one browser profile share that identity; use separate profiles for students.
-Vite environment values are public; server secret keys belong only on the server.
-
-```sh
 npm test
 npm run lint
-npm run format:check
 npm run build
+npm run test:e2e
 ```
 
-`/join` renders the guest form; `/lobby` requires current membership. Refreshing
-or losing the socket connection clears membership in this Sprint 1 framework.
-Stable reconnect identity belongs to Ammar's GR-34; it is not implemented here.
-No game state or student identity is persisted to browser storage yet.
+Copy `.env.example` to `.env.local` without overwriting an existing environment.
+Set the Supabase URL, publishable key and game server URL; restart Vite after
+changing them. Secrets belong only on the server.
 
-`App.jsx` mounts the student app under a single `BrowserRouter`. Unknown URLs
-redirect to `/join`.
+## Routes
 
-Code locations:
+- `/join`: guest sign-in on submission and PIN/nickname validation.
+- `/login`, `/signup`, `/auth/callback`, `/auth/recovery`, `/auth/reset`: accounts.
+- `/account/link`: preserve a guest identity while attaching email/password.
+- `/teacher-enrollment`: confirmed account plus private teacher invitation.
+- `/teacher`: quiz dashboard with create, delete/archive, duplicate and host.
+- `/teacher/quizzes/:id`: atomic editor, reorder and validation.
+- `/teacher/host/:sessionId`: lobby, host controls, distribution and class results.
+- `/teacher/sessions`: active/past sessions and teacher CSV.
+- `/play/:sessionId`: student lobby, question, feedback, scoreboard, results and own CSV.
+- `/study`: history, teacher-written explanations and cosmetic inventory.
 
-- `src/components/ui/`: Button, TextInput, Card, scoped color/type/layout tokens.
-- `src/features/student/pages/`: join form and server-derived lobby.
-- `src/features/student/model/`: validation, public snapshots, membership updates.
-- `src/features/student/services/`: injectable demo and Socket.io clients.
-- `src/features/student/StudentProvider.jsx`: membership, request and socket lifecycle.
-- `tests/student.test.js`: boundary, acknowledgement, error, and subscription checks.
+One root data router owns all live routes. Teacher guards reject guests and registered
+students without a teacher profile; server/database authorization remains decisive.
+Auth initialization never signs a user in anonymously. Guest creation occurs only
+on Join. Browser storage contains the SDK session and safe last-session/request IDs,
+never answer keys or the server secret. Refresh/reconnect rebuilds the current game
+from the server with the same verified user ID. Multiple tabs share that identity;
+use independent browser contexts for separate players.
 
-The student routes are currently the app shell. When teacher routes arrive,
-compose both route sets under a single `BrowserRouter`; narrow the student
-fallback redirect to student paths so it does not capture teacher routes. Shared
-UI uses `.grasp-app` CSS variables; wrap teacher pages with that class to reuse
-the tokens. Full sprint and merge guidance is in
-[the implementation plan](../docs/nathaniel-implementation-plan.md).
+The editor warns before leaving unsaved changes, including browser Back/Forward.
+Successful saves bypass that warning. Questions on hosted quizzes are read-only;
+duplicate them from the dashboard to edit.
+
+## Testing and legacy demo
+
+The Playwright suite runs disposable test services from `server/tests/`, uses real
+database migrations, and exercises teacher enrollment, isolation, quiz creation,
+three independent mobile-sized student contexts, refresh, results and export.
+Auth/Data API transport is a fixture; see the release guide for real Supabase
+verification. Axe checks the dashboard and mobile feedback screen. Physical devices
+and screen readers still need manual release testing.
+
+The original one-browser lobby fixture remains available in development only with
+`VITE_STUDENT_DEMO=true`, PIN `123456`. It does not simulate other players or gameplay.
+The old `features/student` provider is used only by that fixture; the live product uses
+`features/join`, `features/game`, shared Auth, and the v1 game protocol.

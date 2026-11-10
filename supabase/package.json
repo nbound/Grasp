@@ -3,8 +3,10 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "test": "node --test tests/database.test.mjs",
-    "test:local": "node --test tests/local.integration.test.mjs"
+    "test": "node --test tests/database.test.mjs tests/game.test.mjs",
+    "test:local": "node --test tests/local.integration.test.mjs",
+    "schema:check": "node scripts/schema-snapshot.mjs",
+    "schema:write": "node scripts/schema-snapshot.mjs --write"
   },
   "devDependencies": {
     "@electric-sql/pglite": "0.3.14"

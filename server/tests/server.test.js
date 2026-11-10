@@ -179,6 +179,50 @@ test("health is public; missing tokens and disallowed WebSocket origins are reje
   }
 });
 
+test("study history and cosmetics remain available after AI routes are removed", async (t) => {
+  const repo = repository();
+  const study = { streak: 2, answered: 4, correct: 3, mistakes: [] };
+  repo.study = async (user) => {
+    assert.equal(user.id, "student");
+    return study;
+  };
+  repo.setCosmetics = async (user, values) => {
+    assert.equal(user.id, "student");
+    assert.deepEqual(values, { theme: "forest", avatar: "seed" });
+    return {};
+  };
+  const f = await fixture(t, repo);
+  const headers = {
+    Authorization: "Bearer student",
+    "Content-Type": "application/json",
+  };
+  const history = await fetch(`${f.url}/api/study`, { headers });
+  assert.equal(history.status, 200);
+  assert.deepEqual(await history.json(), study);
+  const cosmetics = await fetch(`${f.url}/api/study/cosmetics`, {
+    method: "POST",
+    headers,
+    body: JSON.stringify({ theme: "forest", avatar: "seed" }),
+  });
+  assert.equal(cosmetics.status, 200);
+  for (const [method, path] of [
+    ["POST", "/ai/questions"],
+    ["POST", "/ai/slides"],
+    ["POST", "/study/tutor"],
+    ["POST", "/practice"],
+    ["GET", "/practice"],
+    ["GET", `/practice/${quizId}`],
+    ["POST", `/practice/${quizId}/answer`],
+  ]) {
+    const response = await fetch(`${f.url}/api${path}`, {
+      method,
+      headers,
+      ...(method === "POST" ? { body: "{}" } : {}),
+    });
+    assert.equal(response.status, 404, `${method} ${path}`);
+  }
+});
+
 test("teacher hosts; three students join; room access and leave ownership are enforced", async (t) => {
   const f = await fixture(t);
   const host = await f.connect("teacher");

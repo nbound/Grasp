@@ -147,6 +147,8 @@ vite.config.ts.timestamp-*
 
 # Turbo Repo
 .turbo
+playwright-report/
+test-results/
 
 # OS / editor
 .DS_Store
@@ -164,3 +166,5 @@ supabase/.branches/
 # Ignore ad-hoc database dumps instead of every SQL file.
 *.dump
 *.backup
+
+output/

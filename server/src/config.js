@@ -55,5 +55,6 @@ export function readConfig(env = process.env) {
     publishableKey,
     secretKey,
     origins,
+    teacherSignupCode: env.TEACHER_SIGNUP_CODE,
   };
 }

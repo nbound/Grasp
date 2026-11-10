@@ -1,9 +1,10 @@
 # Grasp database
 
-The initial migration is `migrations/20261029000000_initial_schema.sql`.
-`schema.sql` is an identical, readable snapshot for the SQL editor; apply either
-the migration or the snapshot to an empty application schema, never both.
-Tests check that they match. Future schema changes should be new migrations.
+The initial migration is `migrations/20261029000000_initial_schema.sql`; the game
+creation upgrade is `migrations/20261106000000_game_creation.sql`.
+`schema.sql` concatenates all ordered migrations for reference. Apply migrations
+in order; never reapply the snapshot to existing tables. `npm run schema:check`
+checks the snapshot. Future schema changes should be new migrations.
 The initial migration is transactional and intentionally fails if application
 tables already exist; it does not drop or overwrite existing data.
 
@@ -57,22 +58,25 @@ no passwords, and no Auth identities. They are not browser login accounts.
 Create actual test accounts through Supabase Auth when implementing authentication.
 Do not load these fixtures into production.
 
-The Auth trigger provisions teacher profiles for permanent email users, handles
-email changes and anonymous-to-permanent conversion, and limits display names
-to 80 characters. Existing permanent email users are backfilled by the migration.
-Display-name metadata never grants authorization.
+The initial migration backfills existing teachers. The upgrade changes future
+registration: only trusted `raw_app_meta_data.grasp_role=teacher` or an existing
+teacher record provisions a teacher profile. Guest-to-account conversion stays
+a student. Server enrollment requires a confirmed email and private invitation.
+User metadata never grants authorization.
 
 ## Database contract
 
-| Object | Authenticated browser access | Trusted server access |
-| --- | --- | --- |
-| teachers | Read own permanent-user profile; update display_name only | Full |
-| quizzes | Own CRUD; owner and timestamps cannot be updated | Full |
-| questions | CRUD only for own, never-hosted quizzes | Full, subject to history protection |
-| game_sessions | Host creates own quiz session; host/member reads | State transitions and lifecycle |
-| teams | Host/member reads | Writes; initial teams created by trigger |
-| players | Own row or host reads; join through RPC only | Score and membership management |
-| answers | Own answers or host reads; no browser writes | Validated answer persistence |
+| Object                           | Authenticated browser access                              | Trusted server access                                   |
+| -------------------------------- | --------------------------------------------------------- | ------------------------------------------------------- |
+| teachers                         | Read own permanent-user profile; update display_name only | Full                                                    |
+| quizzes                          | Own CRUD; owner and timestamps cannot be updated          | Full                                                    |
+| questions                        | CRUD only for own, never-hosted quizzes                   | Full, subject to history protection                     |
+| game_sessions                    | Host creates own quiz session; host/member reads          | State transitions and lifecycle                         |
+| teams                            | Host/member reads                                         | Writes; initial teams created by trigger                |
+| players                          | Host reads; join through RPC only                         | Score/membership management; filtered student snapshots |
+| answers                          | Host reads; no browser writes                             | Atomic scoring; phase-filtered student feedback         |
+| practice_sets / practice_answers | None directly                                             | Legacy records retained for history                        |
+| study_days / cosmetics           | None directly                                             | Earned inventory and owned selections                   |
 
 Signed-out callers have no table privileges or join RPC access. RLS additionally
 requires a non-anonymous JWT and an actual permanent Auth user with a teacher
@@ -83,8 +87,8 @@ return only booleans about the current user, and avoid recursive RLS.
   remains the quiz owner. A composite foreign key requires these owners to match.
 - `questions.position` is zero-based and unique within a quiz. Its deferrable
   constraint supports reordering in one database transaction. Separate browser
-  update requests are not an atomic reorder; use a validated transaction/RPC
-  when implementing the editor.
+  update requests are not an atomic reorder; the editor uses `save_quiz` to replace
+  unhosted questions atomically with optimistic revision checks.
 - Questions have 2–6 nonblank string choices, a valid zero-based correct index,
   explanation, nonnegative points, and an optional timer. Null means no timer.
 - Once a quiz has a session, its questions cannot be changed or removed. Duplicate
@@ -106,7 +110,7 @@ return only booleans about the current user, and avoid recursive RLS.
 After obtaining a valid Supabase user session, call:
 
 ```js
-supabase.rpc('join_game', { p_code: '123456', p_nickname: 'Alice' })
+supabase.rpc("join_game", { p_code: "123456", p_nickname: "Alice" });
 ```
 
 The public function is a security-invoker wrapper around a private, privileged
