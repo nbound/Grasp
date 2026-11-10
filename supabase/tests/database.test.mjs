@@ -382,7 +382,7 @@ test('migration backfills existing permanent users and excludes existing anonymo
     await db.query(`insert into auth.users(id,email,is_anonymous,raw_user_meta_data)
       values ($1,'existing@example.test',false,'{"display_name":"Existing teacher"}'),
              ($2,null,true,'{"role":"teacher"}')`, [teacherA, studentA])
-    await db.exec(await read('migrations/initial_schema.sql'))
+    await db.exec(await read('migrations/20261029000000_initial_schema.sql'))
     assert.deepEqual((await db.query('select id, display_name from public.teachers')).rows,
       [{ id: teacherA, display_name: 'Existing teacher' }])
   } finally {

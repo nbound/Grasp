@@ -5,6 +5,8 @@ creation upgrade is `migrations/20261106000000_game_creation.sql`.
 `schema.sql` concatenates all ordered migrations for reference. Apply migrations
 in order; never reapply the snapshot to existing tables. `npm run schema:check`
 checks the snapshot. Future schema changes should be new migrations.
+Keep the timestamp prefixes: tests and snapshot generation sort migrations by
+filename, so the initial schema must run before upgrades that depend on it.
 The initial migration is transactional and intentionally fails if application
 tables already exist; it does not drop or overwrite existing data.
 
