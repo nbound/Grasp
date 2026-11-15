@@ -42,7 +42,7 @@ export function StudyPage() {
   return (
     <main className={`wide theme-${study?.theme || 'forest'}`}>
       <p className="grasp-eyebrow">Your study space</p>
-      <h1>Keep curiosity growing.</h1>
+      <h1>Build knowledge. Bring the win.</h1>
       {!session.user.is_anonymous && !teacher && (
         <p>
           Have a teacher invitation?{' '}
@@ -117,9 +117,10 @@ export function StudyPage() {
           </section>
           <History />
           <section className="grasp-card stack">
-            <h2>Review what needs another look</h2>
+            <h2>Train for your next team challenge</h2>
             <p>
-              Review your answers and teacher explanations from completed games.
+              Review your answers and teacher explanations. Bring stronger
+              knowledge to your next game.
             </p>
             {study.mistakes.length === 0 && (
               <p>No saved mistakes to review yet.</p>

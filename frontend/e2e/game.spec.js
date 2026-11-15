@@ -36,6 +36,11 @@ test('teacher creates a quiz, three independent students play, refresh, and expo
 }) => {
   const errors = []
   page.on('pageerror', (error) => errors.push(error.message))
+  await page.goto('/join')
+  await page.screenshot({
+    path: 'test-results/join-updated.png',
+    fullPage: true,
+  })
   await page.goto('/teacher')
   await expect(page).toHaveURL(/login/)
   await page.getByLabel('Email', { exact: true }).fill('teacher@example.test')
@@ -71,7 +76,13 @@ test('teacher creates a quiz, three independent students play, refresh, and expo
     .filter({ has: page.getByRole('heading', { name: 'Browser journey' }) })
   await card.getByRole('button', { name: 'Host', exact: true }).click()
   await expect(
-    page.getByRole('heading', { name: 'Bring everyone together.' }),
+    page.getByRole('heading', { name: 'Rally your team. Own the challenge.' }),
+  ).toBeVisible()
+  await expect(
+    page.getByRole('heading', { name: 'Foxes', exact: true }),
+  ).toBeVisible()
+  await expect(
+    page.getByRole('heading', { name: 'Owls', exact: true }),
   ).toBeVisible()
   const pin = await page.locator('.game-pin').innerText()
   const students = []
@@ -91,7 +102,7 @@ test('teacher creates a quiz, three independent students play, refresh, and expo
       await student.getByRole('button', { name: 'Join your team →' }).click()
       await expect(
         student.getByRole('heading', {
-          name: 'You’re in. Get ready to learn.',
+          name: 'You’re in. Play for your team.',
         }),
       ).toBeVisible()
     }
@@ -124,14 +135,16 @@ test('teacher creates a quiz, three independent students play, refresh, and expo
     await page.getByRole('button', { name: 'Lock answers & reveal' }).click()
     await expect(
       students[0].page.getByRole('heading', {
-        name: '✓ Correct! Keep growing.',
+        name: '✓ Correct! Points for your team.',
       }),
     ).toBeVisible()
     expect(
       (await new AxeBuilder({ page: students[0].page }).analyze()).violations,
     ).toEqual([])
     await expect(
-      students[1].page.getByRole('heading', { name: '↗ A chance to learn.' }),
+      students[1].page.getByRole('heading', {
+        name: '↗ Learn it. Win the next one.',
+      }),
     ).toBeVisible()
     await students[0].page.screenshot({
       path: 'test-results/student-feedback-mobile.png',
@@ -144,7 +157,7 @@ test('teacher creates a quiz, three independent students play, refresh, and expo
     await page.getByRole('button', { name: 'Finish game', exact: true }).click()
     await expect(
       students[0].page.getByRole('heading', {
-        name: 'Look how much you explored.',
+        name: 'Knowledge played. Points earned.',
       }),
     ).toBeVisible()
     const downloading = students[0].page.waitForEvent('download')

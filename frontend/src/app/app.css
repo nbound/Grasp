@@ -258,3 +258,208 @@
     scroll-behavior: auto !important;
   }
 }
+
+/* A quiet graph-paper field keeps the classroom theme behind the game. */
+.grasp-app {
+  background-image:
+    radial-gradient(ellipse at 95% 15%, #9bd5ee0c, transparent 45%),
+    radial-gradient(ellipse at 5% 70%, #b5df9110, transparent 40%),
+    linear-gradient(#b5df9106 1px, transparent 1px),
+    linear-gradient(90deg, #b5df9106 1px, transparent 1px);
+  background-size:
+    auto,
+    auto,
+    48px 48px,
+    48px 48px;
+}
+.grasp-app header {
+  border-bottom: 1px solid var(--grasp-border);
+}
+.grasp-app footer {
+  background: var(--grasp-paper);
+}
+.grasp-app .grasp-card {
+  box-shadow: 0 12px 32px #00000012;
+}
+.grasp-app .knowledge-shapes {
+  display: block;
+  width: min(100%, 360px);
+  height: auto;
+  color: var(--grasp-primary);
+}
+.grasp-app .join-layout {
+  display: grid;
+  grid-template-columns: 1.15fr 1fr;
+  align-items: center;
+  gap: clamp(2rem, 5vw, 5rem);
+  margin-block: clamp(2rem, 7vh, 5rem);
+}
+.grasp-app .join-intro h1 {
+  max-width: 13ch;
+  font-size: clamp(2.5rem, 5vw, 4.2rem);
+}
+.grasp-app .join-intro > .grasp-muted {
+  max-width: 39ch;
+}
+.grasp-app .join-intro .knowledge-shapes {
+  width: min(80%, 300px);
+  margin-block: 1.5rem;
+}
+.grasp-app .join-panel {
+  min-width: 0;
+}
+.grasp-app .join-panel .grasp-card {
+  border-top: 4px solid var(--grasp-primary);
+  margin-top: 0;
+}
+.grasp-app .join-panel .grasp-button {
+  width: 100%;
+}
+.grasp-app .lobby-hero {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(180px, 300px);
+  gap: 2rem;
+  align-items: center;
+  padding: clamp(1.25rem, 3vw, 2rem);
+  margin-block: 1rem 0.5rem;
+  border: 1px solid var(--grasp-border);
+  border-radius: 1.1rem;
+  background: linear-gradient(120deg, #1a2c25, #162720);
+}
+.grasp-app .lobby-hero h1 {
+  font-size: clamp(2rem, 3.4vw, 3rem);
+  max-width: 19ch;
+}
+.grasp-app .lobby-hero p {
+  overflow-wrap: anywhere;
+}
+.grasp-app .lobby-hero .game-pin {
+  font-variant-numeric: tabular-nums;
+  font-size: clamp(2.5rem, 7vw, 5rem);
+}
+.grasp-app .team-card {
+  border-top: 4px solid var(--team-accent);
+  position: relative;
+  overflow: hidden;
+}
+.grasp-app .team-color-0 {
+  --team-accent: var(--grasp-team-foxes);
+}
+.grasp-app .team-color-1 {
+  --team-accent: var(--grasp-team-owls);
+}
+.grasp-app .team-color-2 {
+  --team-accent: var(--grasp-team-wolves);
+}
+.grasp-app .team-color-3 {
+  --team-accent: var(--grasp-team-dolphins);
+}
+.grasp-app .team-color-4 {
+  --team-accent: var(--grasp-team-tigers);
+}
+.grasp-app .team-color-5 {
+  --team-accent: var(--grasp-team-eagles);
+}
+.grasp-app .team-color-6 {
+  --team-accent: var(--grasp-team-bears);
+}
+.grasp-app .team-color-7 {
+  --team-accent: var(--grasp-team-sharks);
+}
+.grasp-app .team-card::after {
+  content: '';
+  position: absolute;
+  width: 100px;
+  height: 100px;
+  border: 16px solid var(--team-accent);
+  opacity: 0.07;
+  transform: rotate(45deg);
+  right: -35px;
+  bottom: -35px;
+  pointer-events: none;
+}
+.grasp-app .team-heading {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+.grasp-app .team-heading .grasp-eyebrow {
+  color: var(--team-accent);
+  margin: 0 0 0.2rem;
+}
+.grasp-app .team-heading h2 {
+  font-size: 1.6rem;
+  margin: 0;
+}
+.grasp-app .team-badge {
+  display: grid;
+  place-items: center;
+  width: 64px;
+  height: 64px;
+  flex-shrink: 0;
+  font-size: 2rem;
+  background: var(--grasp-paper);
+  border: 1px solid var(--team-accent);
+  border-radius: 16px 16px 16px 0;
+}
+.grasp-app .team-card ul {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.65rem;
+  padding: 0;
+  list-style: none;
+  margin: 0;
+}
+.grasp-app .player-chip {
+  border: 1px solid var(--grasp-border);
+  border-radius: 0.5rem;
+  padding: 0.4rem 0.7rem;
+  background: var(--grasp-paper);
+}
+.grasp-app progress {
+  appearance: none;
+  border: 0;
+  border-radius: 1rem;
+  overflow: hidden;
+  background: var(--grasp-accent);
+}
+.grasp-app progress::-webkit-progress-bar {
+  background: var(--grasp-accent);
+}
+.grasp-app progress::-webkit-progress-value {
+  background: var(--grasp-primary);
+}
+.grasp-app progress::-moz-progress-bar {
+  background: var(--grasp-primary);
+}
+@media (max-width: 700px) {
+  .grasp-app .join-layout,
+  .grasp-app .lobby-hero {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 1.25rem;
+  }
+  .grasp-app .join-intro h1 {
+    max-width: 16ch;
+  }
+  .grasp-app .join-intro .knowledge-shapes {
+    width: 140px;
+    float: right;
+    margin: 0 0 0 0.75rem;
+  }
+  .grasp-app .join-intro > .grasp-eyebrow:last-child {
+    max-width: 20ch;
+    padding-top: 1rem;
+  }
+  .grasp-app .lobby-hero > .knowledge-shapes {
+    display: none;
+  }
+}
+
+.grasp-app .scoreboard li[class*='team-color-'] {
+  border-left: 4px solid var(--team-accent);
+  padding-left: 1rem;
+}
+.grasp-app .scoreboard li[class*='team-color-'] > span {
+  color: var(--team-accent);
+}

@@ -139,11 +139,11 @@ function Editor({ id }) {
   return (
     <main className="wide">
       <p className="grasp-eyebrow">Quiz builder</p>
-      <h1>{id === 'new' ? 'What will you explore?' : quiz.title}</h1>
+      <h1>{id === 'new' ? 'Build the next team challenge.' : quiz.title}</h1>
       <p>
         {hosted
           ? 'This quiz has been hosted. Duplicate it from your dashboard to change questions.'
-          : 'Four choices. One answer. Space to explain why.'}
+          : 'Challenge what students know. Make every correct answer count for their team.'}
       </p>
       <form onSubmit={save} className="stack" aria-busy={busy}>
         <fieldset

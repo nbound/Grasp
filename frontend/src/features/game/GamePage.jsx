@@ -1,3 +1,5 @@
+import { teamIdentity } from '../teams/teamIdentity.js'
+import { KnowledgeShapes } from '../../components/ui/KnowledgeShapes.jsx'
 import { useEffect, useRef, useState } from 'react'
 import { Link, useParams } from 'react-router'
 import { openGameSocket, emit } from '../../lib/gameSocket.js'
@@ -32,9 +34,19 @@ function Scores({ state }) {
       <h2>{state.mode === 'team' ? 'Team scoreboard' : 'Leaderboard'}</h2>
       <ol className="scoreboard">
         {rows.map((row) => (
-          <li key={row.id}>
+          <li
+            key={row.id}
+            className={
+              state.mode === 'team'
+                ? `team-color-${teamIdentity(row).color}`
+                : undefined
+            }
+          >
             <span>
-              #{row.rank} {row.name || row.nickname}
+              #{row.rank}{' '}
+              {state.mode === 'team'
+                ? `${teamIdentity(row).symbol} ${teamIdentity(row).name}`
+                : row.nickname}
             </span>
             <strong>{row.score.toLocaleString()} pts</strong>
           </li>
@@ -158,7 +170,7 @@ function Game({ sessionId }) {
   const disabled = busy || status !== 'connected'
   return (
     <main
-      className={`wide ${state?.feedback && !state.isHost ? (state.feedback.correct ? 'feedback-correct' : 'feedback-incorrect') : ''}`}
+      className={`wide game-page ${state?.feedback && !state.isHost ? (state.feedback.correct ? 'feedback-correct' : 'feedback-incorrect') : ''}`}
     >
       <div className="page-heading">
         <p role="status">
@@ -196,45 +208,70 @@ function Game({ sessionId }) {
           </p>
           {state.phase === 'lobby' ? (
             <>
-              <h1>
-                {state.isHost
-                  ? 'Bring everyone together.'
-                  : 'You’re in. Get ready to learn.'}
-              </h1>
-              <p>
-                Join at <strong>{window.location.origin}/join</strong>
-              </p>
-              <p
-                className="game-pin"
-                aria-label={`Game PIN ${state.pin.split('').join(' ')}`}
-              >
-                {state.pin}
-              </p>
-              <p>
-                {state.players.filter((p) => p.connected).length} connected ·{' '}
-                {state.players.length} joined
-              </p>
-              {!state.isHost && (
-                <p>
-                  You are{' '}
-                  <strong>
-                    {
-                      state.players.find((p) => p.id === state.playerId)
-                        ?.nickname
-                    }
-                  </strong>
-                  , on {state.teams.find((t) => t.id === state.teamId)?.name}.
-                </p>
-              )}
+              <div className="lobby-hero">
+                <div>
+                  <p className="grasp-eyebrow">
+                    Bring your class knowledge. Take the lead.
+                  </p>
+                  <h1>
+                    {state.isHost
+                      ? 'Rally your team. Own the challenge.'
+                      : 'You’re in. Play for your team.'}
+                  </h1>
+                  <p>
+                    Join at <strong>{window.location.origin}/join</strong>
+                  </p>
+                  <p
+                    className="game-pin"
+                    aria-label={`Game PIN ${state.pin.split('').join(' ')}`}
+                  >
+                    {state.pin}
+                  </p>
+                  <p>
+                    {state.players.filter((p) => p.connected).length} connected
+                    · {state.players.length} joined
+                  </p>
+                  {!state.isHost && (
+                    <p>
+                      You are{' '}
+                      <strong>
+                        {
+                          state.players.find((p) => p.id === state.playerId)
+                            ?.nickname
+                        }
+                      </strong>
+                      , on{' '}
+                      {
+                        teamIdentity(
+                          state.teams.find((t) => t.id === state.teamId),
+                        ).name
+                      }
+                      .
+                    </p>
+                  )}
+                </div>
+                <KnowledgeShapes />
+              </div>
               <div className="quiz-grid">
                 {state.teams.map((team) => (
-                  <section key={team.id} className="grasp-card">
-                    <h2>{team.name}</h2>
+                  <section
+                    key={team.id}
+                    className={`grasp-card team-card team-color-${teamIdentity(team).color}`}
+                  >
+                    <div className="team-heading">
+                      <span className="team-badge" aria-hidden="true">
+                        {teamIdentity(team).symbol}
+                      </span>
+                      <div>
+                        <p className="grasp-eyebrow">Team {team.id}</p>
+                        <h2>{teamIdentity(team).name}</h2>
+                      </div>
+                    </div>
                     <ul>
                       {state.players
                         .filter((p) => p.teamId === team.id)
                         .map((p) => (
-                          <li key={p.id}>
+                          <li key={p.id} className="player-chip">
                             {p.nickname}{' '}
                             <span className="grasp-muted">
                               {p.connected ? '· ready' : '· disconnected'}
@@ -335,9 +372,9 @@ function Game({ sessionId }) {
                         {state.isHost
                           ? 'Answer revealed'
                           : state.feedback.correct
-                            ? '✓ Correct! Keep growing.'
+                            ? '✓ Correct! Points for your team.'
                             : state.submitted
-                              ? '↗ A chance to learn.'
+                              ? '↗ Learn it. Win the next one.'
                               : '— No answer submitted.'}
                       </h2>
                       <p>
@@ -356,9 +393,10 @@ function Game({ sessionId }) {
               )}
               {state.phase === 'results' && (
                 <>
-                  <h1>Look how much you explored.</h1>
+                  <h1>Knowledge played. Points earned.</h1>
                   <p>
-                    Game complete. Review the explanations and keep learning.
+                    The final scores are in. Review the answers, sharpen your
+                    knowledge, and come back stronger.
                   </p>
                   <button onClick={download}>
                     Download {state.isHost ? 'class' : 'my'} CSV

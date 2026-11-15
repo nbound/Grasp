@@ -55,7 +55,7 @@ export function Shell() {
           <Outlet />
         </Suspense>
       </div>
-      <footer>Grasp · Learn together, at your pace.</footer>
+      <footer>Grasp · Your knowledge. Your team. Your next win.</footer>
     </div>
   )
 }

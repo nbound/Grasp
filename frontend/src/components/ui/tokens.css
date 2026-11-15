@@ -15,6 +15,14 @@
   --grasp-hover: #2b4235;
   --grasp-focus: #8bcdf5;
   --grasp-error: #ffabb2;
+  --grasp-team-foxes: #f5b58c;
+  --grasp-team-owls: #d5b8f5;
+  --grasp-team-wolves: #a8c7fa;
+  --grasp-team-dolphins: #88ddd5;
+  --grasp-team-tigers: #f5d477;
+  --grasp-team-eagles: #b5df91;
+  --grasp-team-bears: #efaec7;
+  --grasp-team-sharks: #9bd5ee;
   --grasp-disabled-bg: #34483c;
   --grasp-disabled-text: #b4c2b6;
 }

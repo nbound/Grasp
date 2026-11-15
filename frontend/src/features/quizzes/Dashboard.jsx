@@ -86,7 +86,9 @@ export function Dashboard() {
         <div>
           <p className="grasp-eyebrow">Teacher workspace</p>
           <h1>Your quizzes</h1>
-          <p className="grasp-muted">Make room for a little discovery.</p>
+          <p className="grasp-muted">
+            Turn classroom knowledge into a team challenge.
+          </p>
         </div>
         <Link className="grasp-button" to="/teacher/quizzes/new">
           Create quiz +
@@ -101,7 +103,10 @@ export function Dashboard() {
       {quizzes?.length === 0 && (
         <section className="grasp-card">
           <h2>Your first quiz starts here</h2>
-          <p>Add a few questions, invite your class, and learn together.</p>
+          <p>
+            Build a quiz from your lessons, bring in the teams, and let
+            knowledge decide the winner.
+          </p>
         </section>
       )}
       <div className="quiz-grid">
