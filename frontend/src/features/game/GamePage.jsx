@@ -170,9 +170,9 @@ function Game({ sessionId }) {
   const disabled = busy || status !== 'connected'
   return (
     <main
-      className={`wide game-page ${state?.feedback && !state.isHost ? (state.feedback.correct ? 'feedback-correct' : 'feedback-incorrect') : ''}`}
+      className={`wide game-page ${state && !state.isHost && state.mode === 'team' ? `team-color-${teamIdentity(state.teams.find((t) => t.id === state.teamId)).color}` : 'host-progress'} ${state?.feedback && !state.isHost ? (state.feedback.correct ? 'feedback-correct' : 'feedback-incorrect') : ''}`}
     >
-      <div className="page-heading">
+      <div className="page-heading game-connection">
         <p role="status">
           {status === 'connected'
             ? '● Connected'
@@ -211,11 +211,13 @@ function Game({ sessionId }) {
               <div className="lobby-hero">
                 <div>
                   <p className="grasp-eyebrow">
-                    Bring your class knowledge. Take the lead.
+                    {state.isHost
+                      ? 'Make space for questions. Help every student join in.'
+                      : 'Bring your class knowledge. Take the lead.'}
                   </p>
                   <h1>
                     {state.isHost
-                      ? 'Rally your team. Own the challenge.'
+                      ? 'Help your students find their spark.'
                       : 'You’re in. Play for your team.'}
                   </h1>
                   <p>
@@ -393,10 +395,15 @@ function Game({ sessionId }) {
               )}
               {state.phase === 'results' && (
                 <>
-                  <h1>Knowledge played. Points earned.</h1>
+                  <h1>
+                    {state.isHost
+                      ? 'Look what your students figured out.'
+                      : 'Knowledge played. Points earned.'}
+                  </h1>
                   <p>
-                    The final scores are in. Review the answers, sharpen your
-                    knowledge, and come back stronger.
+                    {state.isHost
+                      ? 'Use these answers to spot what clicked, find who needs a hand, and plan your students’ next aha! moment.'
+                      : 'The final scores are in. Review the answers, sharpen your knowledge, and come back stronger.'}
                   </p>
                   <button onClick={download}>
                     Download {state.isHost ? 'class' : 'my'} CSV

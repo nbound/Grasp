@@ -12,15 +12,32 @@ export function KnowledgeShapes() {
         stroke="currentColor"
         strokeOpacity=".12"
       />
-      <circle cx="99" cy="99" r="66" fill="#b5df91" />
+      <path d="M28 29H57V58H28Z" fill="var(--grasp-team-wolves)" />
+      <circle cx="325" cy="42" r="13" fill="var(--grasp-team-tigers)" />
+      <path d="M205 230L226 193L247 230Z" fill="var(--grasp-team-sharks)" />
+      <path
+        d="M119 189H145"
+        stroke="var(--grasp-neutral-sand)"
+        strokeWidth="5"
+      />
+      <circle cx="99" cy="99" r="66" fill="var(--grasp-team-eagles)" />
       <path d="M99 33V165M33 99H165" stroke="#183125" strokeWidth="2" />
-      <path d="M180 165L261 25L342 165Z" fill="#9bd5ee" />
-      <path d="M180 165H342L261 246Z" fill="#f5c795" />
-      <path d="M34 210L72 172L110 210L72 248Z" fill="#b5df91" />
-      <circle cx="155" cy="224" r="24" stroke="#b5df91" strokeWidth="12" />
+      <path d="M180 165L261 25L342 165Z" fill="var(--grasp-team-owls)" />
+      <path d="M180 165H342L261 246Z" fill="var(--grasp-team-foxes)" />
+      <path
+        d="M34 210L72 172L110 210L72 248Z"
+        fill="var(--grasp-team-dolphins)"
+      />
+      <circle
+        cx="155"
+        cy="224"
+        r="24"
+        stroke="var(--grasp-team-bears)"
+        strokeWidth="12"
+      />
       <path
         d="M285 201H326M305.5 180.5V221.5"
-        stroke="#edf5e9"
+        stroke="var(--grasp-neutral-cream)"
         strokeWidth="5"
       />
     </svg>

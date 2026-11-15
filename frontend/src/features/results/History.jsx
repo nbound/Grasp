@@ -43,7 +43,11 @@ export function History({ teacher = false }) {
       )}
       {!sessions && !error && <p role="status">Loading history…</p>}
       {sessions?.length === 0 && (
-        <p>Join a game to start a learning history.</p>
+        <p>
+          {teacher
+            ? 'Host a quiz to discover what your students understand and where you can help.'
+            : 'Join a game to start a learning history.'}
+        </p>
       )}
       <div className="table-scroll">
         <table>

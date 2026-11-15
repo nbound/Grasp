@@ -1,3 +1,4 @@
+import { KnowledgeShapes } from '../../components/ui/KnowledgeShapes.jsx'
 import { useEffect, useState } from 'react'
 import { Link, useNavigate } from 'react-router'
 import { useAuth } from '../../app/AuthContext.js'
@@ -87,7 +88,8 @@ export function Dashboard() {
           <p className="grasp-eyebrow">Teacher workspace</p>
           <h1>Your quizzes</h1>
           <p className="grasp-muted">
-            Turn classroom knowledge into a team challenge.
+            Spark your students’ curiosity. Turn today’s lesson into tomorrow’s
+            aha!
           </p>
         </div>
         <Link className="grasp-button" to="/teacher/quizzes/new">
@@ -101,12 +103,15 @@ export function Dashboard() {
       )}
       {!quizzes && !error && <p role="status">Loading quizzes…</p>}
       {quizzes?.length === 0 && (
-        <section className="grasp-card">
-          <h2>Your first quiz starts here</h2>
-          <p>
-            Build a quiz from your lessons, bring in the teams, and let
-            knowledge decide the winner.
-          </p>
+        <section className="grasp-card teacher-welcome">
+          <div>
+            <h2>Your first quiz starts here</h2>
+            <p>
+              Start with a question your students will love puzzling over. Help
+              them connect ideas, learn together, and celebrate what clicks.
+            </p>
+          </div>
+          <KnowledgeShapes />
         </section>
       )}
       <div className="quiz-grid">
@@ -117,7 +122,10 @@ export function Dashboard() {
               {quiz.game_mode.replaceAll('_', ' ')}
             </p>
             <h2>{quiz.title}</h2>
-            <p>{quiz.description || 'Ready for your next class.'}</p>
+            <p>
+              {quiz.description ||
+                'A fresh chance to help your students connect the dots.'}
+            </p>
             <div className="actions">
               <Link to={`/teacher/quizzes/${quiz.id}`}>
                 {quiz.game_sessions[0].count ? 'View' : 'Edit'}

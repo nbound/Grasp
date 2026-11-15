@@ -463,3 +463,280 @@
 .grasp-app .scoreboard li[class*='team-color-'] > span {
   color: var(--team-accent);
 }
+
+/* Neutral surfaces let the team palette stand out. */
+.grasp-app h1 {
+  color: var(--grasp-neutral-cream);
+}
+.grasp-app .grasp-eyebrow {
+  color: var(--grasp-neutral-sand);
+}
+.grasp-app .grasp-muted,
+.grasp-app footer {
+  color: var(--grasp-neutral-stone);
+}
+.grasp-app .join-panel .grasp-card,
+.grasp-app .sticky-save {
+  background: var(--grasp-neutral-charcoal);
+}
+.grasp-app .lobby-hero {
+  background: linear-gradient(
+    120deg,
+    var(--grasp-neutral-slate),
+    var(--grasp-neutral-charcoal)
+  );
+}
+.grasp-app .answer-option span {
+  color: var(--grasp-neutral-cream);
+  background: var(--grasp-neutral-slate);
+  border-radius: 0.4rem 0.4rem 0.4rem 0;
+  border-color: var(--grasp-team-owls);
+}
+.grasp-app .answer-option:nth-child(2) span {
+  border-color: var(--grasp-team-dolphins);
+}
+.grasp-app .answer-option:nth-child(3) span {
+  border-color: var(--grasp-team-tigers);
+}
+.grasp-app .answer-option:nth-child(4) span {
+  border-color: var(--grasp-team-bears);
+}
+.grasp-app .teacher-welcome {
+  display: grid;
+  grid-template-columns: 1fr 220px;
+  align-items: center;
+  gap: 2rem;
+  background: var(--grasp-neutral-charcoal);
+}
+.grasp-app .game-page progress {
+  --progress-fill: var(--team-accent, var(--grasp-team-dolphins));
+  accent-color: var(--progress-fill);
+}
+.grasp-app .game-page progress::-webkit-progress-value {
+  background: var(--progress-fill);
+}
+.grasp-app .game-page progress::-moz-progress-bar {
+  background: var(--progress-fill);
+}
+.grasp-app .host-progress progress::-webkit-progress-value {
+  background: linear-gradient(
+    90deg,
+    var(--grasp-team-foxes),
+    var(--grasp-team-owls),
+    var(--grasp-team-dolphins)
+  );
+}
+.grasp-app .host-progress progress::-moz-progress-bar {
+  background: linear-gradient(
+    90deg,
+    var(--grasp-team-foxes),
+    var(--grasp-team-owls),
+    var(--grasp-team-dolphins)
+  );
+}
+.grasp-app.gameplay-shell header {
+  display: flex;
+  flex-wrap: nowrap;
+  padding-block: 0.4rem;
+  gap: 1rem;
+}
+.grasp-app.gameplay-shell header .grasp-brand {
+  font-size: 1.3rem;
+}
+.grasp-app .game-menu {
+  position: relative;
+}
+.grasp-app .game-menu summary {
+  cursor: pointer;
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+  padding-inline: 1rem;
+  border: 1px solid var(--grasp-border);
+  border-radius: 0.6rem;
+  background: var(--grasp-neutral-slate);
+}
+.grasp-app .game-menu summary::after {
+  content: ' ≡';
+  padding-left: 0.6rem;
+}
+.grasp-app .game-menu nav.actions {
+  position: absolute;
+  right: 0;
+  top: 100%;
+  z-index: 20;
+  display: grid;
+  min-width: 190px;
+  padding: 1rem;
+  border: 1px solid var(--grasp-border);
+  border-radius: 0.7rem;
+  background: var(--grasp-neutral-charcoal);
+  box-shadow: 0 12px 24px #0006;
+}
+.grasp-app.gameplay-shell main {
+  margin-top: 1rem;
+}
+.grasp-app .game-connection {
+  margin-bottom: 0.5rem;
+}
+.grasp-app .game-connection p {
+  margin: 0;
+  font-size: 0.85rem;
+}
+@media (max-width: 700px) {
+  .grasp-app .teacher-welcome {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+  .grasp-app .teacher-welcome .knowledge-shapes {
+    width: 180px;
+  }
+}
+
+/* Scatter quiet geometric landmarks across the full page, behind all controls. */
+.grasp-app {
+  position: relative;
+  isolation: isolate;
+}
+.grasp-app .ambient-geometry {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  z-index: -1;
+  pointer-events: none;
+  user-select: none;
+}
+.grasp-app .ambient-geometry span {
+  position: absolute;
+  display: block;
+  width: clamp(60px, 10vw, 150px);
+  aspect-ratio: 1;
+  opacity: 0.16;
+}
+.grasp-app .geo-ring {
+  border: 16px solid currentColor;
+  border-radius: 50%;
+}
+.grasp-app .geo-diamond {
+  border: 12px solid currentColor;
+  transform: rotate(45deg);
+}
+.grasp-app .geo-triangle {
+  background: currentColor;
+  clip-path: polygon(50% 0, 100% 100%, 0 100%);
+}
+.grasp-app .geo-bars {
+  background: repeating-linear-gradient(
+    135deg,
+    currentColor 0 8px,
+    transparent 8px 23px
+  );
+}
+.grasp-app .geo-one {
+  top: 9%;
+  left: -4%;
+  color: var(--grasp-team-owls);
+}
+.grasp-app .geo-two {
+  top: 17%;
+  right: -3%;
+  color: var(--grasp-team-foxes);
+}
+.grasp-app .geo-three {
+  top: 42%;
+  left: 45%;
+  color: var(--grasp-neutral-sand);
+}
+.grasp-app .geo-four {
+  top: 52%;
+  right: 2%;
+  color: var(--grasp-team-dolphins);
+}
+.grasp-app .geo-five {
+  top: 70%;
+  left: 4%;
+  color: var(--grasp-team-bears);
+}
+.grasp-app .geo-six {
+  top: 84%;
+  right: 16%;
+  color: var(--grasp-team-wolves);
+}
+.grasp-app .geo-seven {
+  top: 31%;
+  left: 18%;
+  color: var(--grasp-team-tigers);
+}
+.grasp-app .geo-eight {
+  top: 8%;
+  left: 52%;
+  color: var(--grasp-team-sharks);
+}
+.grasp-app .geo-nine {
+  top: 65%;
+  right: 42%;
+  color: var(--grasp-team-eagles);
+}
+.grasp-app .geo-ten {
+  top: 92%;
+  left: 32%;
+  color: var(--grasp-neutral-stone);
+}
+.grasp-app .grasp-card {
+  position: relative;
+  isolation: isolate;
+}
+.grasp-app .grasp-card:not(.team-card)::before {
+  content: '';
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  width: 52px;
+  height: 24px;
+  background: repeating-linear-gradient(
+    135deg,
+    var(--grasp-team-dolphins) 0 4px,
+    transparent 4px 12px
+  );
+  opacity: 0.14;
+  z-index: -1;
+  pointer-events: none;
+}
+.grasp-app .answer-option {
+  position: relative;
+  isolation: isolate;
+}
+.grasp-app .answer-option::after {
+  content: '';
+  position: absolute;
+  right: 14px;
+  bottom: 10px;
+  width: 27px;
+  height: 27px;
+  border: 5px solid var(--grasp-team-owls);
+  border-radius: 50%;
+  opacity: 0.16;
+  z-index: -1;
+  pointer-events: none;
+}
+.grasp-app .answer-option:nth-child(2)::after {
+  border-color: var(--grasp-team-dolphins);
+  border-radius: 0;
+  transform: rotate(45deg);
+}
+.grasp-app .answer-option:nth-child(3)::after {
+  border-color: var(--grasp-team-tigers);
+  border-radius: 0;
+}
+.grasp-app .answer-option:nth-child(4)::after {
+  border-color: var(--grasp-team-bears);
+}
+@media (max-width: 700px) {
+  .grasp-app .join-intro .knowledge-shapes {
+    float: none;
+    margin-top: 1rem;
+  }
+  .grasp-app .ambient-geometry span {
+    opacity: 0.1;
+  }
+}

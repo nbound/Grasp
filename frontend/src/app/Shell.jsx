@@ -1,3 +1,4 @@
+import { AmbientGeometry } from '../components/ui/AmbientGeometry.jsx'
 import { Link, Outlet, Navigate, useLocation, useNavigate } from 'react-router'
 import { Suspense, useState } from 'react'
 import { useAuth } from './AuthContext.js'
@@ -5,6 +6,9 @@ export function Shell() {
   const { session, teacher, client, error: authError } = useAuth(),
     navigate = useNavigate()
   const [error, setError] = useState('')
+  const { pathname } = useLocation()
+  const gameplay =
+    pathname.startsWith('/play/') || pathname.startsWith('/teacher/host/')
   async function logout() {
     const result = await client.auth.signOut()
     if (result.error) {
@@ -15,7 +19,8 @@ export function Shell() {
     navigate('/join')
   }
   return (
-    <div className="grasp-app">
+    <div className={`grasp-app ${gameplay ? 'gameplay-shell' : ''}`}>
+      <AmbientGeometry />
       <a className="skip-link" href="#content">
         Skip to content
       </a>
@@ -23,21 +28,42 @@ export function Shell() {
         <Link className="grasp-brand" to="/join">
           grasp ✳
         </Link>
-        <nav className="actions" aria-label="Main navigation">
-          <Link to="/join">Join a game</Link>
-          {teacher && (
-            <>
-              <Link to="/teacher">My quizzes</Link>
-              <Link to="/teacher/sessions">Sessions</Link>
-            </>
-          )}
-          <Link to="/study">Study space</Link>
-          {session ? (
-            <button onClick={logout}>Sign out</button>
-          ) : (
-            <Link to="/login">Sign in</Link>
-          )}
-        </nav>
+        {gameplay ? (
+          <details className="game-menu">
+            <summary>Menu</summary>
+            <nav className="actions" aria-label="Main navigation">
+              <Link to="/join">Join a game</Link>
+              {teacher && (
+                <>
+                  <Link to="/teacher">My quizzes</Link>
+                  <Link to="/teacher/sessions">Sessions</Link>
+                </>
+              )}
+              <Link to="/study">Study space</Link>
+              {session ? (
+                <button onClick={logout}>Sign out</button>
+              ) : (
+                <Link to="/login">Sign in</Link>
+              )}
+            </nav>
+          </details>
+        ) : (
+          <nav className="actions" aria-label="Main navigation">
+            <Link to="/join">Join a game</Link>
+            {teacher && (
+              <>
+                <Link to="/teacher">My quizzes</Link>
+                <Link to="/teacher/sessions">Sessions</Link>
+              </>
+            )}
+            <Link to="/study">Study space</Link>
+            {session ? (
+              <button onClick={logout}>Sign out</button>
+            ) : (
+              <Link to="/login">Sign in</Link>
+            )}
+          </nav>
+        )}
       </header>
       <div id="content">
         {(error || authError) && (

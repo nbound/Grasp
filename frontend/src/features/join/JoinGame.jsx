@@ -62,7 +62,6 @@ export function JoinGame() {
           help your team take the lead.
         </p>
         <KnowledgeShapes />
-        <p className="grasp-eyebrow">Class knowledge → Team points → Victory</p>
       </section>
       <div className="join-panel">
         <form className="grasp-card stack" onSubmit={join} aria-busy={busy}>

@@ -100,7 +100,11 @@ export function AuthPage({ mode = 'login' }) {
   }
   return (
     <main className="narrow">
-      <p className="grasp-eyebrow">Your next team win starts here</p>
+      <p className="grasp-eyebrow">
+        {teacher || mode === 'enroll'
+          ? 'Help your students discover what they can do'
+          : 'Your next team win starts here'}
+      </p>
       <h1>{title}</h1>
       {mode === 'enroll' && (
         <p>
