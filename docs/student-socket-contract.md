@@ -54,8 +54,10 @@ visible while any of their sockets remains joined. Offline records preserve
 team/nickname and reserve capacity. Rejoin uses the persisted Auth identity.
 
 The frontend clears displayed membership on disconnect and asks for the PIN
-again. Automatic active-game resume remains GR-34. Transport loss reconnects
-automatically; explicit auth failure requires refresh or a session change.
+again. Active-game resume (GR-34) uses `game_sync` with the session ID from the
+`/play/:sessionId` URL; see [gameplay protocol v1](game-contract.md). Transport
+loss reconnects automatically; explicit auth failure requires refresh or a
+session change.
 Tokens are verified at connect and every operation, plus once per minute for
 idle subscribers. Browser token refresh reconnects with a fresh token.
 
@@ -63,9 +65,12 @@ A supplied user/player ID never grants room access: student membership derives
 from the authenticated RPC result. No emails, auth IDs, tokens, answer keys,
 scores, or privileged database fields are broadcast.
 
-## Future gameplay
+## Gameplay
 
-Game start, questions, answer submission, scoring, reveal, and exports are not
-implemented in this foundation. GR-19-26 must define their server-authorized
-contract before adding handlers. Never trust browser scores, correctness,
-timing, or player IDs. Do not expose answer keys before feedback.
+Game start, questions, answer submission, scoring, reveal, results and resume
+are implemented and documented in [gameplay protocol v1](game-contract.md)
+(`game_sync`, `game_start`, `game_reveal`, `game_next`, `game_end`,
+`game_answer`, `game_update`). After a refresh or server restart, the client
+calls `game_sync` with the session ID; the server restores the same player ID
+and team from the verified Auth identity. Never trust browser scores,
+correctness, timing, or player IDs. Do not expose answer keys before feedback.
