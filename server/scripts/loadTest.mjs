@@ -1,8 +1,12 @@
-// Local load test for the game server. Everything runs in this one process on
-// 127.0.0.1: embedded PGlite with the real Supabase migrations, fixture auth, the
-// real Socket.IO app and socket.io-client players. No env files, no hosted services.
+// Local load test for the game server, all on 127.0.0.1. A child process runs the
+// real Socket.IO app on embedded PGlite (the real Supabase migrations) with fixture
+// auth; this process drives socket.io-client players. Clients and server need
+// separate processes: sharing one event loop corrupted frames at 200 players.
+// No env files, no hosted services.
+import { fork } from "node:child_process";
 import { randomUUID } from "node:crypto";
 import { once } from "node:events";
+import { fileURLToPath } from "node:url";
 import { io } from "socket.io-client";
 import {
   database,
@@ -165,29 +169,26 @@ async function run(ctx, N, Q) {
     return (i + q) % 3 ? correct : (correct + 1 + (i % 3)) % 4;
   };
 
-  const f = (ctx.f = await database()),
-    repo = fixtureRepository(f);
-  const hostUser = await repo.addUser(teacherA, "teacher@example.test", true);
-  await f.as(teacherA, "select public.save_quiz($1,0,$2,$3)", [
-    quizA,
+  const { rpc, url } = (ctx.server = await startServer());
+  const hostToken = await rpc(
+    "addUser",
+    teacherA,
+    "teacher@example.test",
+    true,
+  );
+  await rpc(
+    "saveQuiz",
     JSON.stringify({
       title: "Load test",
       feedback_mode: "after_question",
       timer_enabled: false,
     }),
     JSON.stringify(quiz),
-  ]);
-  const server = (ctx.server = createApp({
-    config: { origins: ["http://localhost:5173"] },
-    repository: repo,
-  }));
-  server.httpServer.listen(0, "127.0.0.1");
-  await once(server.httpServer, "listening");
-  const url = `http://127.0.0.1:${server.httpServer.address().port}`;
-  const connect = (user, label) =>
+  );
+  const connect = (token, label) =>
     new Promise((resolve, reject) => {
       const socket = io(url, {
-        auth: { accessToken: repo.tokenFor(user) },
+        auth: { accessToken: token },
         transports: ["websocket"],
         autoConnect: false,
         reconnection: false,
@@ -214,7 +215,7 @@ async function run(ctx, N, Q) {
       socket.connect();
     });
 
-  const host = await connect(hostUser, "host");
+  const host = await connect(hostToken, "host");
   const hostCall = async (event, payload) => {
     try {
       return (await call(host, event, payload)).data;
@@ -230,13 +231,13 @@ async function run(ctx, N, Q) {
   });
   const sessionId = created.sessionId,
     pin = created.lobby.pin;
-  const questionIds = (await f.data(sessionId)).questions.map((q) => q.id);
+  const questionIds = (await rpc("data", sessionId)).questions.map((q) => q.id);
 
   const players = await Promise.all(
     Array.from({ length: N }, async (_, i) => ({
       i,
       nickname: `Player ${String(i + 1).padStart(3, "0")}`,
-      user: await repo.addUser(),
+      token: await rpc("addUser"),
       expected: quiz.reduce(
         (sum, q, qi) =>
           sum + (choiceFor(i, qi) === q.correct_index ? q.points : 0),
@@ -246,7 +247,7 @@ async function run(ctx, N, Q) {
   );
   const connected = await measure("connect", players, async (p) => {
     const t0 = performance.now();
-    p.socket = await connect(p.user, p.nickname);
+    p.socket = await connect(p.token, p.nickname);
     return performance.now() - t0;
   });
   if (!connected) throw new Error("not every player connected");
@@ -294,7 +295,7 @@ async function run(ctx, N, Q) {
         async (p) => {
           p.socket.disconnect();
           const t0 = performance.now();
-          p.socket = await connect(p.user, p.nickname);
+          p.socket = await connect(p.token, p.nickname);
           const { state } = (await call(p.socket, "game_sync", { sessionId }))
             .data;
           const ms = performance.now() - t0;
@@ -316,7 +317,7 @@ async function run(ctx, N, Q) {
   }
 
   const final = (await hostCall("game_sync", { sessionId })).state;
-  const d = await f.data(sessionId);
+  const d = await rpc("data", sessionId);
   if (final.phase !== "results")
     fail(`final phase is ${final.phase}, expected results`);
   if (d.players.length !== N)
@@ -373,23 +374,97 @@ async function run(ctx, N, Q) {
   );
 }
 
+// Child process: the real app on PGlite, answering the parent's fixture requests.
+async function serve() {
+  const f = await database(),
+    repo = fixtureRepository(f);
+  const app = createApp({
+    config: { origins: ["http://localhost:5173"] },
+    repository: repo,
+  });
+  app.httpServer.listen(0, "127.0.0.1");
+  await once(app.httpServer, "listening");
+  const ops = {
+    addUser: async (...args) => repo.tokenFor(await repo.addUser(...args)),
+    saveQuiz: (quiz, questions) =>
+      f.as(teacherA, "select public.save_quiz($1,0,$2,$3)", [
+        quizA,
+        quiz,
+        questions,
+      ]),
+    data: (id) => f.data(id),
+    close: async () => {
+      await app.close();
+      await f.close();
+    },
+  };
+  process.on("message", async ({ id, op, args }) => {
+    try {
+      process.send({ id, result: await ops[op](...args) });
+    } catch (e) {
+      process.send({ id, error: e.message });
+    }
+    // With the app and database closed, the child exits on its own unless a handle leaks.
+    if (op === "close") process.disconnect();
+  });
+  process.send({ port: app.httpServer.address().port });
+}
+
+async function startServer() {
+  const child = fork(fileURLToPath(import.meta.url), ["--serve"]);
+  const pending = new Map();
+  let seq = 0;
+  const exited = once(child, "exit");
+  child.on("message", (m) => {
+    const call = pending.get(m.id);
+    if (!call) return;
+    pending.delete(m.id);
+    if (m.error) call.reject(new Error(m.error));
+    else call.resolve(m.result);
+  });
+  child.on("exit", (code) => {
+    for (const call of pending.values())
+      call.reject(new Error(`server process exited (${code})`));
+    pending.clear();
+  });
+  const rpc = (op, ...args) =>
+    new Promise((resolve, reject) => {
+      const id = ++seq;
+      pending.set(id, { resolve, reject });
+      child.send({ id, op, args });
+    });
+  const [{ port }] = await Promise.race([
+    once(child, "message"),
+    exited.then(([code]) => {
+      throw new Error(`server process exited (${code}) before listening`);
+    }),
+  ]);
+  return { child, rpc, exited, url: `http://127.0.0.1:${port}` };
+}
+
 async function shutdown(ctx) {
   for (const s of sockets) s.disconnect();
-  const steps = [
-    ["server.close()", () => ctx.server?.close()],
-    ["database close", () => ctx.f?.close()],
-  ];
-  const problems = [];
-  for (const [what, step] of steps) {
+  const server = ctx.server,
+    problems = [],
+    t0 = performance.now();
+  if (server) {
     try {
-      await withTimeout(Promise.resolve(step()), 5000, what);
+      // The server first drains one roster broadcast per disconnect, so allow time.
+      await withTimeout(
+        server.rpc("close"),
+        30000,
+        "server and database close",
+      );
+      const [code] = await withTimeout(server.exited, 5000, "server exit");
+      if (code !== 0) throw new Error(`server process exited with ${code}`);
     } catch (e) {
+      server.child.kill();
       problems.push(e.message);
       fail(`unclean shutdown: ${e.message}`);
     }
   }
   console.log(
-    `${"shutdown".padEnd(12)}${problems.length ? `UNCLEAN: ${problems.join("; ")}` : `clean: ${sockets.length} sockets disconnected, server and database closed`}`,
+    `${"shutdown".padEnd(12)}${problems.length ? `UNCLEAN: ${problems.join("; ")}` : `clean: ${sockets.length} sockets disconnected, server and database closed and process exited in ${Math.round(performance.now() - t0)} ms`}`,
   );
 }
 
@@ -413,7 +488,7 @@ async function main() {
     "embedded PGlite + local fixture auth, 127.0.0.1; latencies are local and not representative of hosted Postgres",
   );
   console.log(
-    `(server and clients share one Node process; ack timeout ${ACK_MS} ms)\n`,
+    `(server in a child process, clients in this one; ack timeout ${ACK_MS} ms)\n`,
   );
   console.log(
     "phase".padEnd(12) +
@@ -449,4 +524,5 @@ for (const event of ["uncaughtException", "unhandledRejection"])
     console.error(`load test crashed: ${e?.message ?? e}`);
     process.exit(1);
   });
-main();
+if (process.argv[2] === "--serve") await serve();
+else await main();
