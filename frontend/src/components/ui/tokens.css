@@ -1,5 +1,6 @@
 :root {
   color-scheme: dark;
+  --grasp-font-family: 'Young Serif', Georgia, serif;
   --grasp-ink: #edf5e9;
   --grasp-muted: #b2c4b8;
   --grasp-paper: #101d19;
@@ -37,9 +38,7 @@
   min-height: 100svh;
   color: var(--grasp-ink);
   background: var(--grasp-paper);
-  font:
-    1rem/1.55 system-ui,
-    sans-serif;
+  font: 1rem/1.55 var(--grasp-font-family);
 }
 .grasp-app header {
   background: var(--grasp-nav);
