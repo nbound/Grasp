@@ -6,7 +6,12 @@ import { fileURLToPath } from 'node:url'
 
 // Explicit opt-in via npm run test:local. Never reads application .env files.
 test('local Supabase Auth, Data API, and concurrent joins', async (t) => {
-  const status = JSON.parse(execFileSync('npx', ['--yes', 'supabase', 'status', '-o', 'json'], {
+  // Windows needs cmd.exe to launch the npx.cmd wrapper.
+  const command = process.platform === 'win32' ? 'cmd.exe' : 'npx'
+  const args = process.platform === 'win32'
+    ? ['/d', '/s', '/c', 'npx --yes supabase status -o json']
+    : ['--yes', 'supabase', 'status', '-o', 'json']
+  const status = JSON.parse(execFileSync(command, args, {
     cwd: fileURLToPath(new URL('../../', import.meta.url)),
     encoding: 'utf8',
     stdio: ['ignore', 'pipe', 'pipe'],
