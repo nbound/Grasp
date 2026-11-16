@@ -11,14 +11,14 @@ export function AuthCallback() {
   if (session) return <Navigate to={teacher ? '/teacher' : '/study'} replace />
   return (
     <main>
-      <h1>This sign-in link could not be restored.</h1>
+      <h1>This Sign-In Link Could Not Be Restored.</h1>
       <p>
         The link may have expired or already been used. Sign in, or request a
         new password reset link.
       </p>
       <nav className="actions">
-        <Link to="/login">Sign in</Link>
-        <Link to="/auth/recovery">Reset password</Link>
+        <Link to="/login">Sign In</Link>
+        <Link to="/auth/recovery">Reset Password</Link>
       </nav>
     </main>
   )

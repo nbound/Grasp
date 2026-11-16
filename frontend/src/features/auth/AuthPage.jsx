@@ -18,12 +18,12 @@ export function AuthPage({ mode = 'login' }) {
     [error, setError] = useState('')
   const teacher = new URLSearchParams(location.search).get('role') === 'teacher'
   const title = {
-    login: 'Welcome back',
-    signup: 'Create your account',
-    recovery: 'Reset your password',
-    reset: 'Choose a password',
-    enroll: 'Teacher enrollment',
-    link: 'Keep your study history',
+    login: 'Welcome Back',
+    signup: 'Create Your Account',
+    recovery: 'Reset Your Password',
+    reset: 'Choose a Password',
+    enroll: 'Teacher Enrollment',
+    link: 'Keep Your Study History',
   }[mode]
   async function submit(event) {
     event.preventDefault()
@@ -43,7 +43,7 @@ export function AuthPage({ mode = 'login' }) {
       } else if (mode === 'signup') {
         if (session?.user.is_anonymous)
           throw new Error(
-            'Use “Keep guest history” to attach an email to this guest, or sign out to start a separate account.',
+            'Use “Keep Guest History” to attach an email to this guest, or sign out to start a separate account.',
           )
         result = await client.auth.signUp({
           email,
@@ -102,8 +102,8 @@ export function AuthPage({ mode = 'login' }) {
     <main className="narrow">
       <p className="grasp-eyebrow">
         {teacher || mode === 'enroll'
-          ? 'Help your students discover what they can do'
-          : 'Your next team win starts here'}
+          ? 'Help Your Students Discover What They Can Do'
+          : 'Your Next Team Win Starts Here'}
       </p>
       <h1>{title}</h1>
       {mode === 'enroll' && (
@@ -115,7 +115,7 @@ export function AuthPage({ mode = 'login' }) {
       <form className="grasp-card stack" onSubmit={submit} aria-busy={busy}>
         {mode === 'signup' && (
           <label>
-            Display name
+            Display Name
             <input
               required
               maxLength={80}
@@ -154,7 +154,7 @@ export function AuthPage({ mode = 'login' }) {
         )}
         {mode === 'enroll' && (
           <label>
-            Teacher invitation
+            Teacher Invitation
             <input
               type="password"
               required
@@ -174,17 +174,17 @@ export function AuthPage({ mode = 'login' }) {
         )}
         {message && <p role="status">{message}</p>}
         <button className="grasp-button" disabled={busy || !client}>
-          {busy ? 'Please wait…' : mode === 'login' ? 'Sign in' : 'Continue'}
+          {busy ? 'Please Wait…' : mode === 'login' ? 'Sign In' : 'Continue'}
         </button>
       </form>
       <nav className="actions">
-        <Link to={`/login${teacher ? '?role=teacher' : ''}`}>Sign in</Link>
+        <Link to={`/login${teacher ? '?role=teacher' : ''}`}>Sign In</Link>
         <Link to={`/signup${teacher ? '?role=teacher' : ''}`}>
-          Create account
+          Create Account
         </Link>
-        <Link to="/auth/recovery">Forgot password?</Link>
+        <Link to="/auth/recovery">Forgot Password?</Link>
         {session?.user.is_anonymous && (
-          <Link to="/account/link">Keep guest history</Link>
+          <Link to="/account/link">Keep Guest History</Link>
         )}
       </nav>
     </main>

@@ -138,9 +138,9 @@ function Editor({ id }) {
     )
   return (
     <main className="wide">
-      <p className="grasp-eyebrow">Quiz builder</p>
+      <p className="grasp-eyebrow">Quiz Builder</p>
       <h1>
-        {id === 'new' ? 'What will make your students say “aha!”?' : quiz.title}
+        {id === 'new' ? 'What Will Make Your Students Say “Aha!”?' : quiz.title}
       </h1>
       <p>
         {hosted
@@ -154,7 +154,7 @@ function Editor({ id }) {
         >
           <section className="grasp-card stack">
             <label>
-              Quiz title
+              Quiz Title
               <input
                 required
                 maxLength={200}
@@ -172,27 +172,27 @@ function Editor({ id }) {
             </label>
             <div className="form-grid">
               <label>
-                Feedback timing
+                Feedback Timing
                 <select
                   value={quiz.feedback_mode}
                   onChange={(e) =>
                     updateQuiz({ feedback_mode: e.target.value })
                   }
                 >
-                  <option value="instant">Instant, after submitting</option>
-                  <option value="after_question">After each question</option>
-                  <option value="end">End of game</option>
+                  <option value="instant">Instant, After Submitting</option>
+                  <option value="after_question">After Each Question</option>
+                  <option value="end">End of Game</option>
                 </select>
               </label>
               <label>
-                Game mode
+                Game Mode
                 <select
                   value={quiz.game_mode}
                   onChange={(e) => updateQuiz({ game_mode: e.target.value })}
                 >
                   <option value="team">Teams</option>
-                  <option value="duel">1v1 · exactly two players</option>
-                  <option value="free_for_all">Free for all</option>
+                  <option value="duel">1v1 · Exactly Two Players</option>
+                  <option value="free_for_all">Free for All</option>
                 </select>
               </label>
             </div>
@@ -204,7 +204,7 @@ function Editor({ id }) {
                   updateQuiz({ timer_enabled: e.target.checked })
                 }
               />{' '}
-              Enable question timers (never changes points)
+              Enable Question Timers (never changes points)
             </label>
           </section>
           {questions.map((q, index) => (
@@ -253,7 +253,7 @@ function Editor({ id }) {
                 />
               </label>
               <fieldset className="stack">
-                <legend>Choices · select the correct answer</legend>
+                <legend>Choices · Select the Correct Answer</legend>
                 {q.choices.map((choice, c) => (
                   <div className="choice-editor" key={c}>
                     <input
@@ -295,7 +295,7 @@ function Editor({ id }) {
               </label>
               <div className="form-grid">
                 <label>
-                  Points for a correct answer
+                  Points for a Correct Answer
                   <input
                     type="number"
                     min={0}
@@ -309,7 +309,7 @@ function Editor({ id }) {
                 </label>
                 {quiz.timer_enabled && (
                   <label>
-                    Time limit (seconds)
+                    Time Limit (Seconds)
                     <input
                       type="number"
                       min={5}
@@ -335,7 +335,7 @@ function Editor({ id }) {
               markDirty()
             }}
           >
-            Add question +
+            Add Question +
           </button>
         </fieldset>
         {error && (
@@ -349,11 +349,11 @@ function Editor({ id }) {
               {busy
                 ? 'Saving…'
                 : dirty || id === 'new'
-                  ? 'Save quiz'
+                  ? 'Save Quiz'
                   : 'Saved ✓'}
             </button>
           )}
-          <Link to="/teacher">Back to quizzes</Link>
+          <Link to="/teacher">Back to Quizzes</Link>
         </div>
       </form>
     </main>

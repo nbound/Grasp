@@ -51,11 +51,11 @@ export function JoinGame() {
   return (
     <main className="wide join-layout">
       <section className="join-intro">
-        <p className="grasp-eyebrow">One team. Every answer counts.</p>
+        <p className="grasp-eyebrow">One Team. Every Answer Counts.</p>
         <h1>
-          Team up.
+          Team Up.
           <br />
-          Know more. Win together.
+          Know More. Win Together.
         </h1>
         <p className="grasp-muted">
           Bring what you know from class. Answer questions, earn points, and
@@ -65,7 +65,7 @@ export function JoinGame() {
       </section>
       <div className="join-panel">
         <form className="grasp-card stack" onSubmit={join} aria-busy={busy}>
-          <h2>Join a game</h2>
+          <h2>Join a Game</h2>
           <label>
             Game PIN
             <input
@@ -79,7 +79,7 @@ export function JoinGame() {
             />
           </label>
           <label>
-            Your nickname
+            Your Nickname
             <input
               required
               minLength={2}
@@ -96,13 +96,13 @@ export function JoinGame() {
             </p>
           )}
           <button className="grasp-button" disabled={busy}>
-            {busy ? 'Joining…' : 'Join your team →'}
+            {busy ? 'Joining…' : 'Join Your Team →'}
           </button>
         </form>
         <nav className="actions">
-          <Link to="/login?role=teacher">I’m a teacher</Link>
-          <Link to="/study">My study space</Link>
-          {last && <Link to={`/play/${last}`}>Resume last game</Link>}
+          <Link to="/login?role=teacher">I’m a Teacher</Link>
+          <Link to="/study">My Study Space</Link>
+          {last && <Link to={`/play/${last}`}>Resume Last Game</Link>}
         </nav>
         <p className="grasp-note">
           Think it through. Correct answers win points; speed never does.

@@ -75,7 +75,7 @@ const router = demo
               path="/teacher/sessions"
               element={
                 <main className="wide">
-                  <h1>Your sessions</h1>
+                  <h1>Your Sessions</h1>
                   <History teacher />
                 </main>
               }

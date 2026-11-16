@@ -15,7 +15,7 @@ test('signup stays a student until invited; teacher quiz isolation is visible in
 }) => {
   await page.goto('/signup')
   await capture(page, 'signup')
-  await page.getByLabel('Display name').fill('New learner')
+  await page.getByLabel('Display Name').fill('New learner')
   await page.getByLabel('Email', { exact: true }).fill('student@example.test')
   await page.getByLabel('Password', { exact: true }).fill('fixture-password')
   await page.getByRole('button', { name: 'Continue', exact: true }).click()
@@ -23,20 +23,20 @@ test('signup stays a student until invited; teacher quiz isolation is visible in
   await capture(page, 'signup-confirmation')
   await page.goto('/teacher')
   await expect(
-    page.getByRole('heading', { name: 'Teacher access required' }),
+    page.getByRole('heading', { name: 'Teacher Access Required' }),
   ).toBeVisible()
   await capture(page, 'teacher-access-required')
-  await page.getByRole('link', { name: 'Enter teacher invitation' }).click()
+  await page.getByRole('link', { name: 'Enter Teacher Invitation' }).click()
   await capture(page, 'teacher-enrollment')
-  await page.getByLabel('Teacher invitation').fill('wrong-invitation')
+  await page.getByLabel('Teacher Invitation').fill('wrong-invitation')
   await page.getByRole('button', { name: 'Continue', exact: true }).click()
   await expect(page.getByRole('alert')).toContainText('not available')
-  await page.getByLabel('Teacher invitation').fill('fixture-invitation')
+  await page.getByLabel('Teacher Invitation').fill('fixture-invitation')
   await page.getByRole('button', { name: 'Continue', exact: true }).click()
   await expect(
-    page.getByRole('heading', { name: 'Your quizzes' }),
+    page.getByRole('heading', { name: 'Your Quizzes' }),
   ).toBeVisible()
-  await expect(page.getByText('Your first quiz starts here')).toBeVisible()
+  await expect(page.getByText('Your First Quiz Starts Here')).toBeVisible()
   await capture(page, 'teacher-dashboard-empty')
   await page.goto('/teacher/quizzes/30000000-0000-0000-0000-000000000001')
   await expect(page.getByRole('alert')).toContainText(
@@ -72,24 +72,25 @@ test('teacher creates a quiz, three independent students play, refresh, and expo
   await expect(page).toHaveURL(/login/)
   await page.getByLabel('Email', { exact: true }).fill('teacher@example.test')
   await page.getByLabel('Password', { exact: true }).fill('fixture-password')
-  await page.getByRole('button', { name: 'Sign in', exact: true }).click()
+  await page.getByRole('button', { name: 'Sign In', exact: true }).click()
   await expect(
-    page.getByRole('heading', { name: 'Your quizzes' }),
+    page.getByRole('heading', { name: 'Your Quizzes' }),
   ).toBeVisible()
   expect((await new AxeBuilder({ page }).analyze()).violations).toEqual([])
   await page.screenshot({
     path: 'test-results/teacher-dashboard-updated.png',
     fullPage: true,
   })
-  await page.getByRole('link', { name: 'Create quiz +' }).click()
+  await page.getByRole('link', { name: 'Create Quiz +' }).click()
+  await expect(page.getByRole('button', { name: 'Save Quiz' })).toBeVisible()
   await page.screenshot({
     path: 'test-results/quiz-builder-updated.png',
     fullPage: true,
   })
-  await page.getByLabel('Quiz title', { exact: true }).fill('Browser journey')
+  await page.getByLabel('Quiz Title', { exact: true }).fill('Browser journey')
   page.once('dialog', (dialog) => dialog.dismiss())
   await page.goBack()
-  await expect(page.getByLabel('Quiz title', { exact: true })).toHaveValue(
+  await expect(page.getByLabel('Quiz Title', { exact: true })).toHaveValue(
     'Browser journey',
   )
   await expect(page).toHaveURL(/quizzes\/new$/)
@@ -103,15 +104,15 @@ test('teacher creates a quiz, three independent students play, refresh, and expo
   await page
     .getByLabel('Explanation', { exact: true })
     .fill('A triangle has three sides.')
-  await page.getByRole('button', { name: 'Save quiz', exact: true }).click()
+  await page.getByRole('button', { name: 'Save Quiz', exact: true }).click()
   await expect(page.getByRole('button', { name: 'Saved ✓' })).toBeVisible()
-  await page.getByRole('link', { name: 'Back to quizzes' }).click()
+  await page.getByRole('link', { name: 'Back to Quizzes' }).click()
   const card = page
     .getByRole('article')
     .filter({ has: page.getByRole('heading', { name: 'Browser journey' }) })
   await card.getByRole('button', { name: 'Host', exact: true }).click()
   await expect(
-    page.getByRole('heading', { name: 'Help your students find their spark.' }),
+    page.getByRole('heading', { name: 'Help Your Students Find Their Spark.' }),
   ).toBeVisible()
   await expect(
     page.getByRole('heading', { name: 'Foxes', exact: true }),
@@ -134,11 +135,11 @@ test('teacher creates a quiz, three independent students play, refresh, and expo
       await student.goto('/join')
       if (i === 0) await capture(student, 'join-mobile')
       await student.getByLabel('Game PIN').fill(pin)
-      await student.getByLabel('Your nickname').fill(`Learner ${i + 1}`)
-      await student.getByRole('button', { name: 'Join your team →' }).click()
+      await student.getByLabel('Your Nickname').fill(`Learner ${i + 1}`)
+      await student.getByRole('button', { name: 'Join Your Team →' }).click()
       await expect(
         student.getByRole('heading', {
-          name: 'You’re in. Play for your team.',
+          name: 'You’re In. Play for Your Team.',
         }),
       ).toBeVisible()
     }
@@ -150,7 +151,7 @@ test('teacher creates a quiz, three independent students play, refresh, and expo
       fullPage: true,
     })
     await capture(students[0].page, 'student-lobby')
-    await page.getByRole('button', { name: 'Start game', exact: true }).click()
+    await page.getByRole('button', { name: 'Start Game', exact: true }).click()
     await capture(page, 'host-question')
     for (const student of students)
       await expect(
@@ -177,7 +178,7 @@ test('teacher creates a quiz, three independent students play, refresh, and expo
     )
     await students[0].page.locator('summary').click()
     await expect(
-      students[0].page.getByRole('link', { name: 'Study space', exact: true }),
+      students[0].page.getByRole('link', { name: 'Study Space', exact: true }),
     ).toBeVisible()
     await capture(students[0].page, 'game-menu-mobile')
     await students[0].page.locator('summary').click()
@@ -202,10 +203,10 @@ test('teacher creates a quiz, three independent students play, refresh, and expo
     await expect(
       page.getByText('3 of 3 answered', { exact: true }),
     ).toBeVisible()
-    await page.getByRole('button', { name: 'Lock answers & reveal' }).click()
+    await page.getByRole('button', { name: 'Lock Answers & Reveal' }).click()
     await expect(
       students[0].page.getByRole('heading', {
-        name: '✓ Correct! Points for your team.',
+        name: '✓ Correct! Points for Your Team.',
       }),
     ).toBeVisible()
     expect(
@@ -213,7 +214,7 @@ test('teacher creates a quiz, three independent students play, refresh, and expo
     ).toEqual([])
     await expect(
       students[1].page.getByRole('heading', {
-        name: '↗ Learn it. Win the next one.',
+        name: '↗ Learn It. Win the Next One.',
       }),
     ).toBeVisible()
     await students[0].page.screenshot({
@@ -226,17 +227,17 @@ test('teacher creates a quiz, three independent students play, refresh, and expo
       () => document.documentElement.scrollWidth > window.innerWidth,
     )
     expect(overflow).toBe(false)
-    await page.getByRole('button', { name: 'Finish game', exact: true }).click()
+    await page.getByRole('button', { name: 'Finish Game', exact: true }).click()
     await expect(
       students[0].page.getByRole('heading', {
-        name: 'Knowledge played. Points earned.',
+        name: 'Knowledge Played. Points Earned.',
       }),
     ).toBeVisible()
     await capture(students[0].page, 'student-results')
     await capture(page, 'host-results')
     const downloading = students[0].page.waitForEvent('download')
     await students[0].page
-      .getByRole('button', { name: 'Download my CSV' })
+      .getByRole('button', { name: 'Download My CSV' })
       .click()
     const download = await downloading
     expect(download.suggestedFilename()).toMatch(/grasp-.*\.csv/)
@@ -264,13 +265,13 @@ test('teacher creates a quiz, three independent students play, refresh, and expo
     await students[0].page.goto('/account/link')
     await expect(
       students[0].page.getByRole('heading', {
-        name: 'Keep your study history',
+        name: 'Keep Your Study History',
       }),
     ).toBeVisible()
     await capture(students[0].page, 'link-account')
     await students[0].page.goto('/auth/reset')
     await expect(
-      students[0].page.getByRole('heading', { name: 'Choose a password' }),
+      students[0].page.getByRole('heading', { name: 'Choose a Password' }),
     ).toBeVisible()
     await capture(students[0].page, 'password-reset')
     await page.goto('/teacher/sessions')
@@ -278,8 +279,16 @@ test('teacher creates a quiz, three independent students play, refresh, and expo
       page.getByRole('link', { name: 'Results', exact: true }),
     ).toBeVisible()
     await capture(page, 'teacher-sessions')
+    const desktopViewport = page.viewportSize()
+    await page.setViewportSize({ width: 390, height: 844 })
+    await capture(page, 'teacher-sessions-mobile')
+    await page
+      .getByRole('button', { name: 'CSV', exact: true })
+      .scrollIntoViewIfNeeded()
+    await capture(page, 'teacher-sessions-mobile-actions')
+    await page.setViewportSize(desktopViewport)
     await page.goto('/teacher/quizzes/30000000-0000-0000-0000-000000000001')
-    await expect(page.getByLabel('Quiz title', { exact: true })).toHaveValue(
+    await expect(page.getByLabel('Quiz Title', { exact: true })).toHaveValue(
       'Sample arithmetic',
     )
     await capture(page, 'quiz-editor-existing')

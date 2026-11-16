@@ -1,5 +1,6 @@
 .grasp-app {
   text-align: left;
+  --grasp-action-gap: 0.75rem;
 }
 .grasp-app main.wide {
   width: min(100% - 2 * var(--grasp-page-gutter), 68rem);
@@ -39,7 +40,8 @@
   accent-color: var(--grasp-primary);
 }
 .grasp-app button,
-.grasp-app .grasp-button {
+.grasp-app .grasp-button,
+.grasp-app .grasp-button-secondary {
   min-height: 44px;
   padding: 0.6rem 1rem;
   border: 1px solid var(--grasp-border);
@@ -49,6 +51,12 @@
   font: inherit;
   cursor: pointer;
   text-decoration: none;
+}
+.grasp-app .grasp-button,
+.grasp-app .grasp-button-secondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 }
 .grasp-app .grasp-button {
   color: var(--grasp-on-primary);
@@ -78,18 +86,27 @@
 }
 .grasp-app .actions {
   display: flex;
-  gap: 0.75rem;
+  gap: var(--grasp-action-gap);
   align-items: center;
   flex-wrap: wrap;
 }
 .grasp-app nav.actions {
   margin-block: 0.5rem;
 }
-.grasp-app .actions a {
+.grasp-app .actions a:not(.grasp-button):not(.grasp-button-secondary) {
   padding: 0.4rem 0;
   min-height: 44px;
   display: inline-flex;
   align-items: center;
+}
+.grasp-app .history-actions {
+  min-width: 10rem;
+}
+.grasp-app .history-actions > * {
+  flex-shrink: 0;
+}
+.grasp-app .grasp-card + .history-section {
+  margin-top: 2rem;
 }
 .grasp-app .page-heading,
 .grasp-app .progress-heading {
@@ -185,7 +202,9 @@
 .grasp-app table {
   border-collapse: collapse;
   width: 100%;
+  min-width: 44rem;
   text-align: left;
+  overflow-wrap: normal;
 }
 .grasp-app td,
 .grasp-app th {
@@ -196,6 +215,11 @@
 }
 .grasp-app th {
   color: var(--grasp-muted);
+  white-space: nowrap;
+}
+.grasp-app .history-table td,
+.grasp-app .history-table th {
+  vertical-align: middle;
 }
 .grasp-app .sticky-save {
   background: var(--grasp-nav);
@@ -245,7 +269,7 @@
     position: static;
   }
   .grasp-app header nav {
-    gap: 0.65rem;
+    gap: var(--grasp-action-gap);
     font-size: 0.9rem;
   }
 }
@@ -546,6 +570,9 @@
 .grasp-app .game-menu {
   position: relative;
 }
+.grasp-app .mobile-menu {
+  display: none;
+}
 .grasp-app .game-menu summary {
   cursor: pointer;
   min-height: 44px;
@@ -584,6 +611,16 @@
   font-size: 0.85rem;
 }
 @media (max-width: 700px) {
+  .grasp-app header {
+    display: flex;
+    flex-wrap: nowrap;
+  }
+  .grasp-app header .desktop-nav {
+    display: none;
+  }
+  .grasp-app .mobile-menu {
+    display: block;
+  }
   .grasp-app .teacher-welcome {
     grid-template-columns: 1fr;
     gap: 1rem;

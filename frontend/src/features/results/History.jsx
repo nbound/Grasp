@@ -24,9 +24,9 @@ export function History({ teacher = false }) {
     }
   }, [teacher, reload])
   return (
-    <section>
+    <section className="history-section">
       <div className="page-heading">
-        <h2>{teacher ? 'Past and active sessions' : 'Your games'}</h2>
+        <h2>{teacher ? 'Past and Active Sessions' : 'Your Games'}</h2>
         <button
           onClick={() => {
             setError('')
@@ -50,7 +50,7 @@ export function History({ teacher = false }) {
         </p>
       )}
       <div className="table-scroll">
-        <table>
+        <table className="history-table">
           <thead>
             <tr>
               <th>Quiz</th>
@@ -65,23 +65,32 @@ export function History({ teacher = false }) {
               <tr key={s.id}>
                 <td>{s.quizzes?.title}</td>
                 <td>{new Date(s.created_at).toLocaleString()}</td>
-                <td>{s.phase || s.status}</td>
+                <td>
+                  {(s.phase || s.status).replace(/^./, (letter) =>
+                    letter.toUpperCase(),
+                  )}
+                </td>
                 <td>{teacher ? s.players?.[0]?.count : s.nickname}</td>
                 <td>
-                  <Link
-                    to={teacher ? `/teacher/host/${s.id}` : `/play/${s.id}`}
-                  >
-                    {s.status === 'finished' ? 'Results' : 'Resume'}
-                  </Link>
-                  {s.status === 'finished' && (
-                    <button
-                      onClick={() =>
-                        downloadResults(s.id).catch((e) => setError(e.message))
-                      }
+                  <div className="actions history-actions">
+                    <Link
+                      className="grasp-button-secondary"
+                      to={teacher ? `/teacher/host/${s.id}` : `/play/${s.id}`}
                     >
-                      CSV
-                    </button>
-                  )}
+                      {s.status === 'finished' ? 'Results' : 'Resume'}
+                    </Link>
+                    {s.status === 'finished' && (
+                      <button
+                        onClick={() =>
+                          downloadResults(s.id).catch((e) =>
+                            setError(e.message),
+                          )
+                        }
+                      >
+                        CSV
+                      </button>
+                    )}
+                  </div>
                 </td>
               </tr>
             ))}

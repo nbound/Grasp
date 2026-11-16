@@ -85,15 +85,15 @@ export function Dashboard() {
     <main className="wide">
       <div className="page-heading">
         <div>
-          <p className="grasp-eyebrow">Teacher workspace</p>
-          <h1>Your quizzes</h1>
+          <p className="grasp-eyebrow">Teacher Workspace</p>
+          <h1>Your Quizzes</h1>
           <p className="grasp-muted">
-            Spark your students’ curiosity. Turn today’s lesson into tomorrow’s
-            aha!
+            Spark Your Students’ Curiosity. Turn Today’s Lesson Into Tomorrow’s
+            Aha!
           </p>
         </div>
         <Link className="grasp-button" to="/teacher/quizzes/new">
-          Create quiz +
+          Create Quiz +
         </Link>
       </div>
       {error && (
@@ -105,7 +105,7 @@ export function Dashboard() {
       {quizzes?.length === 0 && (
         <section className="grasp-card teacher-welcome">
           <div>
-            <h2>Your first quiz starts here</h2>
+            <h2>Your First Quiz Starts Here</h2>
             <p>
               Start with a question your students will love puzzling over. Help
               them connect ideas, learn together, and celebrate what clicks.

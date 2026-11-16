@@ -31,7 +31,7 @@ function Scores({ state }) {
   if (!rows.length) return <p>Scores will appear when feedback is released.</p>
   return (
     <section className="grasp-card">
-      <h2>{state.mode === 'team' ? 'Team scoreboard' : 'Leaderboard'}</h2>
+      <h2>{state.mode === 'team' ? 'Team Scoreboard' : 'Leaderboard'}</h2>
       <ol className="scoreboard">
         {rows.map((row) => (
           <li
@@ -188,7 +188,7 @@ function Game({ sessionId }) {
             setMuted((v) => !v)
           }}
         >
-          {muted ? 'Sound off' : 'Sound on'}
+          {muted ? 'Sound Off' : 'Sound On'}
         </button>
       </div>
       {error && (
@@ -198,7 +198,7 @@ function Game({ sessionId }) {
       )}
       {!state && (
         <p>
-          Restoring your game… <Link to="/join">Back to join</Link>
+          Restoring your game… <Link to="/join">Back to Join</Link>
         </p>
       )}
       {state && (
@@ -212,13 +212,13 @@ function Game({ sessionId }) {
                 <div>
                   <p className="grasp-eyebrow">
                     {state.isHost
-                      ? 'Make space for questions. Help every student join in.'
-                      : 'Bring your class knowledge. Take the lead.'}
+                      ? 'Make Space for Questions. Help Every Student Join In.'
+                      : 'Bring Your Class Knowledge. Take the Lead.'}
                   </p>
                   <h1>
                     {state.isHost
-                      ? 'Help your students find their spark.'
-                      : 'You’re in. Play for your team.'}
+                      ? 'Help Your Students Find Their Spark.'
+                      : 'You’re In. Play for Your Team.'}
                   </h1>
                   <p>
                     Join at <strong>{window.location.origin}/join</strong>
@@ -372,12 +372,12 @@ function Game({ sessionId }) {
                     <section className="grasp-card feedback" role="status">
                       <h2>
                         {state.isHost
-                          ? 'Answer revealed'
+                          ? 'Answer Revealed'
                           : state.feedback.correct
-                            ? '✓ Correct! Points for your team.'
+                            ? '✓ Correct! Points for Your Team.'
                             : state.submitted
-                              ? '↗ Learn it. Win the next one.'
-                              : '— No answer submitted.'}
+                              ? '↗ Learn It. Win the Next One.'
+                              : '— No Answer Submitted.'}
                       </h2>
                       <p>
                         <strong>
@@ -397,8 +397,8 @@ function Game({ sessionId }) {
                 <>
                   <h1>
                     {state.isHost
-                      ? 'Look what your students figured out.'
-                      : 'Knowledge played. Points earned.'}
+                      ? 'Look What Your Students Figured Out.'
+                      : 'Knowledge Played. Points Earned.'}
                   </h1>
                   <p>
                     {state.isHost
@@ -406,7 +406,7 @@ function Game({ sessionId }) {
                       : 'The final scores are in. Review the answers, sharpen your knowledge, and come back stronger.'}
                   </p>
                   <button onClick={download}>
-                    Download {state.isHost ? 'class' : 'my'} CSV
+                    Download {state.isHost ? 'Class' : 'My'} CSV
                   </button>
                   <div className="table-scroll">
                     <table>
@@ -415,7 +415,7 @@ function Game({ sessionId }) {
                           <th>Name</th>
                           <th>Question</th>
                           <th>Answer</th>
-                          <th>Correct answer</th>
+                          <th>Correct Answer</th>
                           <th>Points</th>
                           <th>Attempts</th>
                           <th>Time</th>
@@ -448,7 +448,7 @@ function Game({ sessionId }) {
                   </div>
                   <Link to={state.isHost ? '/teacher/sessions' : '/study'}>
                     Continue to{' '}
-                    {state.isHost ? 'session history' : 'my study space'} →
+                    {state.isHost ? 'Session History' : 'My Study Space'} →
                   </Link>
                 </>
               )}
@@ -462,7 +462,7 @@ function Game({ sessionId }) {
                   disabled={disabled}
                   onClick={() => command('start')}
                 >
-                  Start game
+                  Start Game
                 </button>
               )}
               {state.phase === 'question' && (
@@ -471,7 +471,7 @@ function Game({ sessionId }) {
                   disabled={disabled}
                   onClick={() => command('reveal')}
                 >
-                  Lock answers & reveal
+                  Lock Answers & Reveal
                 </button>
               )}
               {state.phase === 'feedback' && (
@@ -481,8 +481,8 @@ function Game({ sessionId }) {
                   onClick={() => command('next')}
                 >
                   {state.questionIndex + 1 === state.questionCount
-                    ? 'Finish game'
-                    : 'Next question'}
+                    ? 'Finish Game'
+                    : 'Next Question'}
                 </button>
               )}
               <button
@@ -492,7 +492,7 @@ function Game({ sessionId }) {
                     void command('end')
                 }}
               >
-                End game
+                End Game
               </button>
             </div>
           )}

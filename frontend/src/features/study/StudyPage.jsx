@@ -41,26 +41,26 @@ export function StudyPage() {
   }
   return (
     <main className={`wide theme-${study?.theme || 'forest'}`}>
-      <p className="grasp-eyebrow">Your study space</p>
+      <p className="grasp-eyebrow">Your Study Space</p>
       <h1>
         {teacher
-          ? 'Help your students connect the dots.'
-          : 'Build knowledge. Bring the win.'}
+          ? 'Help Your Students Connect the Dots.'
+          : 'Build Knowledge. Bring the Win.'}
       </h1>
       {!session.user.is_anonymous && !teacher && (
         <p>
           Have a teacher invitation?{' '}
-          <Link to="/teacher-enrollment">Enroll as a teacher</Link>.
+          <Link to="/teacher-enrollment">Enroll as a Teacher</Link>.
         </p>
       )}
       {session.user.is_anonymous && (
         <section className="grasp-card">
-          <h2>Keep your progress</h2>
+          <h2>Keep Your Progress</h2>
           <p>
             Your games are saved to this guest identity. Attach an email before
             signing out to use history on another device.
           </p>
-          <Link to="/account/link">Keep guest history →</Link>
+          <Link to="/account/link">Keep Guest History →</Link>
         </section>
       )}
       {error && (
@@ -76,7 +76,7 @@ export function StudyPage() {
               <div>
                 <h2>
                   {{ seed: '✦', leaf: '❧', tree: '♧' }[study.avatar]}{' '}
-                  {study.streak} day study streak
+                  {study.streak} Day Study Streak
                 </h2>
                 <p>
                   {study.answered} recent answers · {study.correct} correct
@@ -99,7 +99,9 @@ export function StudyPage() {
                   }
                 >
                   {study.inventory.themes.map((theme) => (
-                    <option key={theme}>{theme}</option>
+                    <option key={theme} value={theme}>
+                      {theme[0].toUpperCase() + theme.slice(1)}
+                    </option>
                   ))}
                 </select>
               </label>
@@ -113,7 +115,9 @@ export function StudyPage() {
                   }
                 >
                   {study.inventory.avatars.map((avatar) => (
-                    <option key={avatar}>{avatar}</option>
+                    <option key={avatar} value={avatar}>
+                      {avatar[0].toUpperCase() + avatar.slice(1)}
+                    </option>
                   ))}
                 </select>
               </label>
@@ -123,8 +127,8 @@ export function StudyPage() {
           <section className="grasp-card stack">
             <h2>
               {teacher
-                ? 'Refresh your knowledge to guide curious students'
-                : 'Train for your next team challenge'}
+                ? 'Refresh Your Knowledge to Guide Curious Students'
+                : 'Train for Your Next Team Challenge'}
             </h2>
             <p>
               {teacher
