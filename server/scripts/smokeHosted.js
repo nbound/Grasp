@@ -114,6 +114,7 @@ try {
         email,
         password,
         email_confirm: true,
+        app_metadata: { grasp_role: "teacher" },
         user_metadata: { display_name: `Smoke ${label}` },
       }),
     ).user;
@@ -153,16 +154,14 @@ try {
   );
   fixtures.quizzes.push({ id: quiz.id, teacherId: host.id });
   ok(
-    await host.api
-      .from("questions")
-      .insert({
-        quiz_id: quiz.id,
-        position: 0,
-        prompt: "Two plus two?",
-        choices: ["1", "2", "3", "4"],
-        correct_index: 3,
-        explanation: "Two plus two is four.",
-      }),
+    await host.api.from("questions").insert({
+      quiz_id: quiz.id,
+      position: 0,
+      prompt: "Two plus two?",
+      choices: ["1", "2", "3", "4"],
+      correct_index: 3,
+      explanation: "Two plus two is four.",
+    }),
   );
   requireCheck(
     ok(await other.api.from("quizzes").select("id").eq("id", quiz.id))

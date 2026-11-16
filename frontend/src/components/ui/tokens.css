@@ -1,5 +1,6 @@
 :root {
   color-scheme: dark;
+  --grasp-font-family: 'Young Serif', Georgia, serif;
   --grasp-ink: #edf5e9;
   --grasp-muted: #b2c4b8;
   --grasp-paper: #101d19;
@@ -15,6 +16,19 @@
   --grasp-hover: #2b4235;
   --grasp-focus: #8bcdf5;
   --grasp-error: #ffabb2;
+  --grasp-team-foxes: #f5b58c;
+  --grasp-team-owls: #d5b8f5;
+  --grasp-team-wolves: #a8c7fa;
+  --grasp-team-dolphins: #88ddd5;
+  --grasp-team-tigers: #f5d477;
+  --grasp-team-eagles: #b5df91;
+  --grasp-team-bears: #efaec7;
+  --grasp-team-sharks: #9bd5ee;
+  --grasp-neutral-cream: #eee6d8;
+  --grasp-neutral-sand: #c9baa5;
+  --grasp-neutral-stone: #aeb7b5;
+  --grasp-neutral-slate: #283432;
+  --grasp-neutral-charcoal: #1d2726;
   --grasp-disabled-bg: #34483c;
   --grasp-disabled-text: #b4c2b6;
 }
@@ -24,9 +38,7 @@
   min-height: 100svh;
   color: var(--grasp-ink);
   background: var(--grasp-paper);
-  font:
-    1rem/1.55 system-ui,
-    sans-serif;
+  font: 1rem/1.55 var(--grasp-font-family);
 }
 .grasp-app header {
   background: var(--grasp-nav);

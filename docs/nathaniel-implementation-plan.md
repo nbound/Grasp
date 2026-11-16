@@ -1,5 +1,9 @@
 # Nathaniel Fadrigon: implementation plan and branch review
 
+Historical Sprint 1 review. Current architecture, implemented features and test
+evidence are in [implementation status](implementation-status.md),
+[game contract](game-contract.md), and [sprint report](sprint-report.md).
+
 Reviewed October 31, 2026. Repository: <https://github.com/nbound/Grasp>.
 
 ## Framework added

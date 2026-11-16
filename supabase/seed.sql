@@ -5,9 +5,9 @@ begin;
 insert into auth.users (id, email, is_anonymous, raw_user_meta_data, raw_app_meta_data, aud, role)
 values
     ('10000000-0000-0000-0000-000000000001', 'teacher-a@example.test', false,
-        '{"display_name":"Teacher A"}', '{}', 'authenticated', 'authenticated'),
+        '{"display_name":"Teacher A"}', '{"grasp_role":"teacher"}', 'authenticated', 'authenticated'),
     ('10000000-0000-0000-0000-000000000002', 'teacher-b@example.test', false,
-        '{"display_name":"Teacher B"}', '{}', 'authenticated', 'authenticated'),
+        '{"display_name":"Teacher B"}', '{"grasp_role":"teacher"}', 'authenticated', 'authenticated'),
     ('20000000-0000-0000-0000-000000000001', null, true,
         '{}', '{}', 'authenticated', 'authenticated'),
     ('20000000-0000-0000-0000-000000000002', null, true,

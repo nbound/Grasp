@@ -2,11 +2,7 @@
 @import './components/ui/tokens.css';
 
 :root {
-  font:
-    1rem/1.45 system-ui,
-    'Segoe UI',
-    Roboto,
-    sans-serif;
+  font: 1rem/1.45 var(--grasp-font-family);
   font-size: clamp(1rem, 0.875rem + 0.25vw, 1.125rem);
   letter-spacing: 0.18px;
   color: var(--grasp-ink);

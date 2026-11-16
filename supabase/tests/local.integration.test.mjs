@@ -49,7 +49,7 @@ test('local Supabase Auth, Data API, and concurrent joins', async (t) => {
     users.push(id)
     // Exercise normal signup, then confirm this local test identity as admin.
     ok(await request(`/auth/v1/admin/users/${id}`, {
-      method: 'PUT', admin: true, body: { email_confirm: true },
+      method: 'PUT', admin: true, body: { email_confirm: true, app_metadata: { grasp_role: 'teacher' } },
     }))
     const login = ok(await request('/auth/v1/token?grant_type=password', {
       method: 'POST', body: { email, password },
@@ -157,12 +157,12 @@ test('local Supabase Auth, Data API, and concurrent joins', async (t) => {
 
     await t.test('native RLS permits joined-session reads without recursion or roster leaks', async () => {
       const session = await host(a, qa)
-      const player = ok(await join(x, session, 'Alice'))
+      ok(await join(x, session, 'Alice'))
       ok(await join(y, session, 'Bob'))
       const member = ok(await request(`/rest/v1/game_sessions?id=eq.${session.id}`, { token: x.token }))
       assert.equal(member.length, 1)
       const players = ok(await request(`/rest/v1/players?session_id=eq.${session.id}`, { token: x.token }))
-      assert.deepEqual(players.map(p => p.id), [player])
+      assert.deepEqual(players, [], 'Raw scores must not leak before feedback')
       assert.deepEqual(ok(await request(`/rest/v1/game_sessions?id=eq.${session.id}`, { token: b.token })), [])
     })
 
@@ -180,7 +180,7 @@ test('local Supabase Auth, Data API, and concurrent joins', async (t) => {
       assert.equal(players.length, joining.status === 200 ? 1 : 0)
     })
 
-    await t.test('server-saved answers are visible only to the player and host; duplicates fail', async () => {
+    await t.test('raw answers are visible only to the host; student feedback uses the server', async () => {
       const session = await host(a, qa)
       const player = ok(await join(x, session, 'Alice'))
       ok(await join(y, session, 'Bob'))
@@ -188,7 +188,7 @@ test('local Supabase Auth, Data API, and concurrent joins', async (t) => {
       const body = { session_id: session.id, quiz_id: qa, player_id: player,
         question_id: question.id, selected_index: 1, is_correct: true, points_awarded: 1000, response_ms: 1000 }
       const [answer] = ok(await request('/rest/v1/answers', { method: 'POST', admin: true, body }))
-      for (const [who, expected] of [[a, 1], [x, 1], [b, 0], [y, 0]]) {
+      for (const [who, expected] of [[a, 1], [x, 0], [b, 0], [y, 0]]) {
         const visible = ok(await request(`/rest/v1/answers?id=eq.${answer.id}`, { token: who.token }))
         assert.equal(visible.length, expected)
       }

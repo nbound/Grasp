@@ -1,9 +1,9 @@
 # Grasp backend
 
-Backend foundation (GR-05–08): Express health endpoint, authenticated Socket.IO,
-teacher hosting, guest joins, automatic teams, and live rosters. It connects the
-existing student frontend to Supabase. Teacher screens, game start/scoring,
-answer persistence, and active-game resume remain separate backlog work.
+Express/Socket.IO with authenticated hosting, guest joins, durable gameplay,
+atomic scoring, restart recovery, results/CSV, study history and cosmetics.
+See [current setup and release steps](../docs/deployment.md) and the
+[gameplay protocol](../docs/game-contract.md). The lobby contract remains supported.
 
 ## Local setup
 
@@ -61,10 +61,10 @@ Multiple tabs sharing one Auth session represent one player. Use separate
 browser profiles/private contexts for independent students.
 
 Run one server instance. Multiple replicas require shared presence, a Socket.IO
-adapter, and coordinated rate limiting. After restart, clients explicitly rejoin
-the lobby. Active-game resume and durable host-create request IDs are not yet
-implemented. Same-socket host_create retries reuse the last session for that
-quiz; after reconnect use host_join with the saved session ID.
+adapter, and coordinated rate limiting. After restart, clients automatically call
+`game_sync` with the URL session ID and verified Auth identity. Stable host-create
+request UUIDs deduplicate hosting across reconnects. Presence remains ephemeral;
+questions, deadlines, accepted answers and score effects are durable.
 
 ## Verification
 
@@ -120,7 +120,8 @@ to exact HTTPS frontend origins, comma-separated. Render supplies `PORT`; the
 server binds `0.0.0.0`. Use one instance initially. For Vercel: root `frontend`,
 public env variables, HTTPS server URL, and SPA rewrites. Register approved
 frontend URLs in Supabase Auth. Before public release configure anonymous Auth
-abuse controls/rate limits; a CAPTCHA challenge UI is not included here.
+abuse controls/rate limits and the matching Turnstile site key. The challenge UI
+is included on signup/login/recovery and guest joining.
 Normal tests do not change hosted data. The explicitly invoked hosted smoke
 runner creates and removes only its test fixtures as described above.
 

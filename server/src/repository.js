@@ -1,6 +1,8 @@
 import { createClient } from "@supabase/supabase-js";
 import { randomInt } from "node:crypto";
 import { PublicError, joinError } from "./errors.js";
+import { gameRepository } from "./game/repository.js";
+import { studyRepository } from "./study.js";
 
 const auth = {
   persistSession: false,
@@ -29,6 +31,8 @@ export function createRepository(config) {
       accessToken: async () => token,
     });
   return {
+    ...gameRepository(admin),
+    ...studyRepository(admin),
     async authenticate(token) {
       if (typeof token !== "string" || token.length > 8192 || !token)
         throw new PublicError("UNAUTHORIZED");
@@ -36,9 +40,20 @@ export function createRepository(config) {
       if (error || !data?.user) throw new PublicError("UNAUTHORIZED");
       return data.user;
     },
-    async host(user, token, { quizId, maxPlayers, teamCount }) {
+    async host(user, token, { quizId, maxPlayers, teamCount, requestId }) {
       if (user.is_anonymous !== false) throw new PublicError("FORBIDDEN");
       const client = asUser(token);
+      if (requestId) {
+        const existing = result(
+          await client
+            .from("game_sessions")
+            .select("id")
+            .eq("host_id", user.id)
+            .eq("request_id", requestId)
+            .maybeSingle(),
+        );
+        if (existing) return existing.id;
+      }
       const quiz = result(
         await client
           .from("quizzes")
@@ -56,10 +71,22 @@ export function createRepository(config) {
             join_code: String(randomInt(0, 1000000)).padStart(6, "0"),
             max_players: maxPlayers,
             team_count: teamCount,
+            ...(requestId ? { request_id: requestId } : {}),
           })
           .select("id")
           .single();
         if (!error) return data.id;
+        if (requestId && error.code === "23505") {
+          const existing = result(
+            await client
+              .from("game_sessions")
+              .select("id")
+              .eq("host_id", user.id)
+              .eq("request_id", requestId)
+              .maybeSingle(),
+          );
+          if (existing) return existing.id;
+        }
         if (error.code !== "23505") throw new PublicError("SERVER_ERROR");
       }
       throw new PublicError("SERVER_BUSY");
