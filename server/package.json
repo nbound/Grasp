@@ -13,7 +13,8 @@
     "test": "node --test --test-timeout=15000 tests/*.test.js",
     "test:local": "node --test tests/local.integration.mjs",
     "test:game": "node --test --test-timeout=65000 tests/game.integration.mjs",
-    "test:timer": "node --test --test-timeout=65000 tests/timerScoring.integration.mjs"
+    "test:timer": "node --test --test-timeout=65000 tests/timerScoring.integration.mjs",
+    "load:test": "node scripts/loadTest.mjs"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.118.0",
