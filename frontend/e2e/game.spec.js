@@ -234,6 +234,18 @@ test('teacher creates a quiz, three independent students play, refresh, and expo
       }),
     ).toBeVisible()
     await capture(students[0].page, 'student-results')
+    const resultRegion = students[0].page.getByRole('region', {
+      name: 'Game results, scroll for all columns',
+    })
+    await resultRegion.focus()
+    await expect(resultRegion).toBeFocused()
+    await students[0].page.keyboard.press('ArrowRight')
+    await expect
+      .poll(() => resultRegion.evaluate((el) => el.scrollLeft))
+      .toBeGreaterThan(0)
+    expect(
+      (await new AxeBuilder({ page: students[0].page }).analyze()).violations,
+    ).toEqual([])
     await capture(page, 'host-results')
     const downloading = students[0].page.waitForEvent('download')
     await students[0].page
@@ -274,6 +286,68 @@ test('teacher creates a quiz, three independent students play, refresh, and expo
       students[0].page.getByRole('heading', { name: 'Choose a Password' }),
     ).toBeVisible()
     await capture(students[0].page, 'password-reset')
+    // Local Auth facade: linking updates the same identity and its real SQL
+    // membership remains available after a fresh-browser login. Mail delivery
+    // is deliberately outside this fixture's scope.
+    const linked = students[1].page
+    await linked.goto('/account/link')
+    await linked
+      .getByLabel('Email', { exact: true })
+      .fill('linked-learner@example.test')
+    const updatedUser = linked.waitForResponse(
+      (response) =>
+        new URL(response.url()).pathname === '/auth/v1/user' &&
+        response.request().method() === 'PUT',
+    )
+    await linked.getByRole('button', { name: 'Continue', exact: true }).click()
+    const identity = await (await updatedUser).json()
+    await expect(linked.getByRole('status')).toContainText('Check your email')
+    const fresh = await browser.newContext()
+    try {
+      const restored = await fresh.newPage()
+      await restored.route('**/api/study', (route) =>
+        route.fulfill({ json: studyData }),
+      )
+      await restored.goto('/login')
+      await restored
+        .getByLabel('Email', { exact: true })
+        .fill('linked-learner@example.test')
+      await restored
+        .getByLabel('Password', { exact: true })
+        .fill('fixture-password')
+      const signedIn = restored.waitForResponse((response) =>
+        response.url().includes('/auth/v1/token'),
+      )
+      await restored
+        .getByRole('button', { name: 'Sign In', exact: true })
+        .click()
+      expect((await (await signedIn).json()).user.id).toBe(identity.id)
+      await expect(
+        restored.getByRole('link', { name: 'Results', exact: true }),
+      ).toBeVisible()
+      await expect(
+        restored.getByRole('cell', { name: 'Learner 2', exact: true }),
+      ).toBeVisible()
+      await restored.goto('/teacher')
+      await expect(
+        restored.getByRole('heading', { name: 'Teacher Access Required' }),
+      ).toBeVisible()
+    } finally {
+      await fresh.close()
+    }
+    // A failed study summary must not hide independently loaded game history.
+    await students[0].page.route('**/api/study', (route) =>
+      route.fulfill({ status: 503, json: { error: { code: 'SERVER_ERROR' } } }),
+    )
+    await students[0].page.goto('/study')
+    await expect(students[0].page.getByRole('alert')).toBeVisible()
+    await expect(
+      students[0].page.getByRole('link', { name: 'Results', exact: true }),
+    ).toBeVisible()
+    await students[0].page.unroute('**/api/study')
+    await students[0].page.route('**/api/study', (route) =>
+      route.fulfill({ json: studyData }),
+    )
     await page.goto('/teacher/sessions')
     await expect(
       page.getByRole('link', { name: 'Results', exact: true }),

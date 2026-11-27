@@ -14,7 +14,10 @@ export function StudyPage() {
     let alive = true
     api('/study')
       .then((study) => {
-        if (alive) setStudy(study)
+        if (alive) {
+          setStudy(study)
+          setError('')
+        }
       })
       .catch((e) => {
         if (alive) setError(e.message)
@@ -123,7 +126,6 @@ export function StudyPage() {
               </label>
             </div>
           </section>
-          <History />
           <section className="grasp-card stack">
             <h2>
               {teacher
@@ -149,6 +151,7 @@ export function StudyPage() {
           </section>
         </>
       )}
+      <History />
     </main>
   )
 }
