@@ -49,7 +49,12 @@ export function History({ teacher = false }) {
             : 'Join a game to start a learning history.'}
         </p>
       )}
-      <div className="table-scroll">
+      <div
+        className="table-scroll"
+        role="region"
+        aria-label="Session history, scroll for all columns"
+        tabIndex={0}
+      >
         <table className="history-table">
           <thead>
             <tr>

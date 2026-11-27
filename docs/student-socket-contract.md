@@ -12,7 +12,7 @@ Failure: `{ ok: false, error: { code: ... } }`.
 
 | Event | Payload | Success data | Authorization |
 | --- | --- | --- | --- |
-| `host_create` | `{ quizId, maxPlayers?: 40, teamCount?: 2 }` | `{ lobby }` | Permanent teacher, owns quiz |
+| `host_create` | `{ quizId, maxPlayers?: 40, teamCount?: 2, requestId?: UUID }` | `{ sessionId, lobby }` or `{ sessionId, state }` for an existing active game | Permanent teacher, owns quiz |
 | `host_join` | `{ sessionId }` | `{ lobby }` | Permanent teacher, owns session |
 | `player_join` | `{ pin: "012345", nickname: "Nate" }` | `{ playerId, lobby }` | Verified Supabase user |
 | `player_left` | `{}` | `{}` (ack optional) | Current socket membership |
@@ -23,9 +23,15 @@ Unicode code points without controls and are unique case-insensitively per game.
 
 Repeat joins preserve the original player ID, nickname, and team while the
 session remains a lobby, including after refresh with the same Auth identity.
-Same-socket host_create retries reuse its last session for that quiz. Save the
-session ID and use host_join after reconnect; host_create across reconnects is
-not idempotent.
+Same-socket `host_create` retries reuse its last session for that quiz. A stable
+optional `requestId` deduplicates creation across connections for the same host.
+Keep that ID when retrying an uncertain request. Without it, creation across
+connections is not idempotent. Use `host_join` to restore a lobby or `game_sync`
+to restore any game phase using the saved session ID (see `game-contract.md`).
+
+Transport failures reconnect automatically. Middleware refusals do not: the game
+client retries with bounded backoff and offers Retry Connection / Sign In Again.
+Each handshake reads the current Auth session; successful reconnect runs `game_sync`.
 
 Errors: `BAD_PIN`, `INVALID_INPUT`, `DUPLICATE_NICKNAME`, `SESSION_CLOSED`,
 `SESSION_FULL`, `UNAUTHORIZED`, `FORBIDDEN`, `RATE_LIMITED`, `SERVER_BUSY`,

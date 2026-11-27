@@ -128,3 +128,13 @@ runner creates and removes only its test fixtures as described above.
 References: [Supabase getUser](https://supabase.com/docs/reference/javascript/auth-getuser),
 [anonymous Auth](https://supabase.com/docs/guides/auth/auth-anonymous),
 [Socket.IO origin checks](https://socket.io/docs/v4/handling-cors/).
+
+## Account verification
+
+With Docker and local Supabase running, `npm --prefix server run test:accounts`
+checks real signup confirmation, password recovery, and anonymous-to-email linking
+using Supabase Auth and emails captured in local Mailpit. It verifies a new login
+retains the guest user ID and removes its disposable Auth users afterward. It never
+loads hosted credentials. `test:local` separately checks real teacher login,
+hosting, three guest joins, and restored player identity. These checks do not
+certify production SMTP delivery or production redirect/CAPTCHA configuration.

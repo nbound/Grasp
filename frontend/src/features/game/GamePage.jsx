@@ -64,6 +64,7 @@ export function GamePage() {
 }
 function Game({ sessionId }) {
   const connection = useRef(null)
+  const retryConnection = useRef(null)
   const [state, setState] = useState(null),
     [status, setStatus] = useState('connecting'),
     [error, setError] = useState(''),
@@ -72,7 +73,8 @@ function Game({ sessionId }) {
     audio = useRef(null),
     played = useRef('')
   useEffect(() => {
-    const { socket, close } = openGameSocket()
+    const { socket, close, retry } = openGameSocket()
+    retryConnection.current = retry
     connection.current = socket
     let alive = true
     const accept = (value) => {
@@ -109,6 +111,7 @@ function Game({ sessionId }) {
       alive = false
       clearInterval(resync)
       connection.current = null
+      retryConnection.current = null
       close()
     }
   }, [sessionId])
@@ -176,8 +179,16 @@ function Game({ sessionId }) {
         <p role="status">
           {status === 'connected'
             ? '● Connected'
-            : 'Reconnecting… Your saved answers are safe.'}
+            : 'Connection unavailable. Your saved answers are safe.'}
         </p>
+        {status !== 'connected' && (
+          <div className="actions">
+            <button onClick={() => retryConnection.current?.()}>
+              Retry Connection
+            </button>
+            <Link to="/login">Sign In Again</Link>
+          </div>
+        )}
         <button
           aria-pressed={!muted}
           onClick={() => {
@@ -408,7 +419,12 @@ function Game({ sessionId }) {
                   <button onClick={download}>
                     Download {state.isHost ? 'Class' : 'My'} CSV
                   </button>
-                  <div className="table-scroll">
+                  <div
+                    className="table-scroll"
+                    role="region"
+                    aria-label="Game results, scroll for all columns"
+                    tabIndex={0}
+                  >
                     <table>
                       <thead>
                         <tr>
